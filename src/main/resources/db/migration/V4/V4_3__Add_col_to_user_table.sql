@@ -1,0 +1,2 @@
+ALTER TABLE store_manager.`user` ADD delete_flag CHAR(1) DEFAULT 'N' NOT NULL COMMENT '삭제 여부';
+ALTER TABLE store_manager.`user` CHANGE delete_flag delete_flag CHAR(1) DEFAULT 'N' NOT NULL COMMENT '삭제 여부' AFTER otp_no;

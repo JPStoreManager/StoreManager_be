@@ -1,0 +1,1 @@
+ALTER TABLE store_manager.store_branch ADD CONSTRAINT store_branch_pk PRIMARY KEY (branch_cd);

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="manage.store.repository.money.mapper.SalesMapper">
+
+    <sql id="salesCol">
+        branch_cd, regist_date,
+        card_sales, cash_sales, comment,
+        created_by, created_date, last_updated_by, last_updated_date
+    </sql>
+
+    <select id="selectByYear" resultType="manage.store.model.money.sales.DailySales.DailySales">
+        SELECT <include refid="salesCol"/>
+        FROM sales
+        WHERE branch_cd = #{branchCd}
+          AND DATE_FORMAT(regist_date, '%Y') = #{year}
+    </select>
+
+    <select id="selectByMonth" resultType="manage.store.model.money.sales.DailySales.DailySales">
+        SELECT <include refid="salesCol"/>
+        FROM sales
+        WHERE branch_cd = #{branchCd}
+          AND DATE_FORMAT(regist_date, '%Y') = #{year}
+          AND DATE_FORMAT(regist_date, '%m') = #{month}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sales (<include refid="salesCol"/>)
+        VALUES (
+            #{branchCd}, #{registDate},
+            #{cardSales}, #{cashSales}, #{comment},
+            #{createdBy}, CURRENT_TIMESTAMP, #{lastUpdatedBy}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sales
+           SET card_sales       = #{cardSales},
+               cash_sales       = #{cashSales},
+               comment          = #{comment},
+               last_updated_by  = #{lastUpdatedBy},
+               last_updated_date= CURRENT_TIMESTAMP
+         WHERE branch_cd = #{branchCd}
+           AND regist_date = #{registDate}
+    </update>
+
+</mapper>

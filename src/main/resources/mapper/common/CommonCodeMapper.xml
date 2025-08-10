@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="manage.store.repository.common.mapper.CommonCodeMapper">
+
+    <sql id="commonCodeCol">
+        grp_cd, grp_cd_desc, cd, cd_val, cd_desc, use_yn, sort_order,
+        created_by, created_date, last_updated_by, last_updated_date
+    </sql>
+
+    <select id="selectCommonCds" resultType="manage.store.model.common.commonCode.CommonCode">
+        SELECT <include refid="commonCodeCol"/>
+        FROM common_code
+        WHERE grp_cd = #{grpCd}
+          AND use_yn = #{useYn}
+        ORDER BY sort_order
+    </select>
+
+    <select id="selectCommonCd" resultType="manage.store.model.common.commonCode.CommonCode">
+        SELECT <include refid="commonCodeCol"/>
+        FROM common_code
+        WHERE grp_cd = #{grpCd}
+          AND cd     = #{cd}
+          AND use_yn = #{useYn}
+        ORDER BY sort_order
+    </select>
+
+</mapper>
