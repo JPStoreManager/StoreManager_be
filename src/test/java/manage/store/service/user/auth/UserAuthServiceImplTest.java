@@ -96,7 +96,7 @@ class UserAuthServiceImplTest {
     void getLoginUserDetails_success() {
         // given
         User user = UserData.user1();
-        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getName(), user.getAuthCd());
+        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd());
         when(authentication.getPrincipal()).thenReturn(loginUserDetails);
 
         // when
@@ -142,7 +142,7 @@ class UserAuthServiceImplTest {
     void isUserAuthenticated_success() {
         // given
         User user = UserData.user1();
-        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getName(), user.getAuthCd());
+        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd());
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(loginUserDetails);
 

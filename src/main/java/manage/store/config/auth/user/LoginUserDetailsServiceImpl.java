@@ -34,7 +34,7 @@ public class LoginUserDetailsServiceImpl implements UserDetailsService {
         User user = userCommonService.getUser(new UserId(username));
         if (!userAuthService.isUserActivated(user)) throw new UsernameNotFoundException("User not found with username: " + username);
 
-        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getName(), user.getAuthCd());
+        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd());
         log.info("[loadUserByUsername] User found: {}", loginUserDetails);
 
         return loginUserDetails;

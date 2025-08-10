@@ -11,15 +11,17 @@ import java.util.List;
 public class LoginUserDetails implements UserDetails{
 
     private final UserId userId;
+    private final String password;
     private final UserName name;
     private final UserAuthCode authCode;
 
-    public LoginUserDetails(UserId userId, UserName name, UserAuthCode authCode) {
+    public LoginUserDetails(UserId userId, String password, UserName name, UserAuthCode authCode) {
         if (userId == null || name == null || authCode == null) {
             throw new IllegalArgumentException("UserId, UserName, and UserAuthCode must not be null");
         }
 
         this.userId = userId;
+        this.password = password;
         this.name = name;
         this.authCode = authCode;
     }
@@ -31,7 +33,7 @@ public class LoginUserDetails implements UserDetails{
 
     @Override
     public String getPassword() {
-        throw new UnsupportedOperationException("Not supported for giving password");
+        return password;
     }
 
     @Override

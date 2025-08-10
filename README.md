@@ -16,10 +16,10 @@ Store manager backend Server
 aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
 
 # 빌드한 Docker 이미지에 ECR 태그 추가
-docker tag <빌드한 태그 ID> <account-id>.dkr.ecr.<region>.amazonaws.com/store-manager:latest
+docker tag <빌드한 태그 ID> <account-id>.dkr.ecr.<region>.amazonaws.com/store-manager-prd:latest
 
 # ECR에 푸시
-docker push <account-id>.dkr.ecr.<region>.amazonaws.com/store-manager:latest
+docker push <account-id>.dkr.ecr.<region>.amazonaws.com/store-manager-prd:latest
 ```
 
 # Build and Run

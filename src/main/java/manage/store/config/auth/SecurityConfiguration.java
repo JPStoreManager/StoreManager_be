@@ -6,6 +6,7 @@ import manage.store.config.auth.response.fail.LoginFailureHandler;
 import manage.store.config.auth.response.fail.NotAuthorizedEntryPoint;
 import manage.store.config.auth.response.success.LoginSuccessHandler;
 import manage.store.config.auth.user.LoginUserDetailsServiceImpl;
+import manage.store.utils.ApiPathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -64,6 +65,13 @@ public class SecurityConfiguration {
     @Autowired
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        final String[] NOT_NEED_AUTH_APIS = {
+                ApiPathUtils.ApiPath.User.LOGIN,
+                ApiPathUtils.ApiPath.User.FindPassword.SEND_OTP,
+                ApiPathUtils.ApiPath.User.FindPassword.VALIDATE_OTP,
+                ApiPathUtils.ApiPath.User.FindPassword.UPDATE_PW,
+        };
+
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(loginAuthenticationProvider);
         authenticationManagerBuilder.userDetailsService(loginUserDetailsService);
@@ -77,7 +85,7 @@ public class SecurityConfiguration {
                 // 인증/인가 매핑
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers("/user/login", "/user/find/pw/**").permitAll()
+                        .requestMatchers(NOT_NEED_AUTH_APIS).permitAll()
                         .anyRequest().authenticated()
                 )
                 /** 아래와 같이 전역적으로 SecurityContext 저장 방식을 설정할 수 있다. */
@@ -107,6 +115,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of(allowedIps));
+        // TODO : 실제 서비스에서는 '*' 대신에 허용할 Origin을 명시적으로 설정 필요
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         configuration.setAllowCredentials(true);
