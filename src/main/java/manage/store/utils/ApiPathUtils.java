@@ -15,7 +15,7 @@ public class ApiPathUtils {
             public static final String LOGOUT = USER_BASIC_PREFIX + "/logout";
 
             public static class FindPassword {
-                private static final String FIND_PW_BASIC_PREFIX = API_PREFIX + USER_BASIC_PREFIX + "/find/pw";
+                private static final String FIND_PW_BASIC_PREFIX = USER_BASIC_PREFIX + "/find/pw";
 
                 public static final String SEND_OTP = FIND_PW_BASIC_PREFIX + "/otp/send";
                 public static final String VALIDATE_OTP = FIND_PW_BASIC_PREFIX + "/otp/verify";
