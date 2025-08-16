@@ -102,11 +102,11 @@ jobs:
             echo "Running new Docker container with the latest image"
             sudo docker run -d --name store-manager \
                        -p 8080:8080 \
-                       -e DB_URL=$DB_URL \
-                       -e DB_USERNAME=$DB_USERNAME \
-                       -e DB_PASSWORD=$DB_PASSWORD \
-                       -e GOOGLE_EMAIL=$GOOGLE_EMAIL \
-                       -e GOOGLE_APP_PW=$GOOGLE_APP_PW \
+                       -e DB_URL="$DB_URL" \
+                       -e DB_USERNAME="$DB_USERNAME" \
+                       -e DB_PASSWORD="$DB_PASSWORD" \
+                       -e GOOGLE_EMAIL="$GOOGLE_EMAIL" \
+                       -e GOOGLE_APP_PW="$GOOGLE_APP_PW" \
                        $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
             echo "Deployment completed successfully"
