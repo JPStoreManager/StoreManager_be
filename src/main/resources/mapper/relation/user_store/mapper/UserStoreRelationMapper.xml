@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="manage.store.repository.relation.user_store.UserStoreRelationMapper">
+
+    <sql id="StoreBranchCol">
+        ${alias}branch_cd, ${alias}branch_nm, ${alias}branch_desc,
+        ${alias}address, ${alias}use_yn, ${alias}sort_order, ${alias}created_by, ${alias}created_date, ${alias}last_updated_by, ${alias}last_updated_date
+    </sql>
+
+    <select id="selectStoreBranchesRelatedWithUser" resultType="manage.store.model.common.branch.StoreBranch">
+        SELECT <include refid="StoreBranchCol"><property name="alias" value="sb."/></include>
+        FROM user u
+        LEFT OUTER JOIN user_store_branch_map usbm
+                     ON u.id = usbm.user_id
+        LEFT OUTER JOIN store_branch sb
+                     ON sb.branch_cd = usbm.branch_cd
+        WHERE 1=1
+          AND u.id = #{userId}
+          AND u.delete_flag = 'N'
+          AND sb.branch_cd IS NOT NULL
+          AND sb.use_yn = 'Y'
+        ORDER BY sb.sort_order
+    </select>
+
+</mapper>

@@ -22,4 +22,14 @@ public class StoreBranch {
     private String lastUpdatedBy;
     private String lastUpdatedDate;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StoreBranch that = (StoreBranch) o;
+
+        return branchCd != null ? branchCd.equals(that.branchCd) : that.branchCd == null;
+    }
+
 }
