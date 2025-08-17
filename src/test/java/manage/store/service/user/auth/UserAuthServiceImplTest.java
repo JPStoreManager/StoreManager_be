@@ -1,9 +1,11 @@
 package manage.store.service.user.auth;
 
 import manage.store.consts.Tags;
+import manage.store.model.common.branch.StoreBranch;
 import manage.store.model.common.value.DeleteFlag;
 import manage.store.model.user.user.User;
 import manage.store.service.user.auth.model.LoginUserDetails;
+import manage.store.testUtils.common.StoreBranchTestUtils;
 import manage.store.testUtils.user.UserData;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -96,7 +100,8 @@ class UserAuthServiceImplTest {
     void getLoginUserDetails_success() {
         // given
         User user = UserData.user1();
-        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd());
+        List<StoreBranch> userAccessibleBranches = List.of(StoreBranchTestUtils.DUMMY_BRANCH1, StoreBranchTestUtils.DUMMY_BRANCH2);
+        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd(), userAccessibleBranches);
         when(authentication.getPrincipal()).thenReturn(loginUserDetails);
 
         // when
@@ -142,7 +147,8 @@ class UserAuthServiceImplTest {
     void isUserAuthenticated_success() {
         // given
         User user = UserData.user1();
-        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd());
+        List<StoreBranch> userAccessibleBranches = List.of(StoreBranchTestUtils.DUMMY_BRANCH1, StoreBranchTestUtils.DUMMY_BRANCH2);
+        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd(), userAccessibleBranches);
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(loginUserDetails);
 

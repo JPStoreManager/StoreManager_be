@@ -3,7 +3,7 @@ package manage.store.api.integration.find;
 import com.google.gson.Gson;
 import manage.store.StoreManagerApplication;
 import manage.store.dto.user.find.FindPwSendOtpRequest;
-import manage.store.repository.user.UserAccountRepository;
+import manage.store.repository.user.account.UserAccountRepository;
 import manage.store.utils.ApiPathUtils;
 import manage.store.model.common.value.SuccessFlag;
 import manage.store.model.user.user.User;

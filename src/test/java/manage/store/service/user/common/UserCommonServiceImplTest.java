@@ -1,12 +1,12 @@
 package manage.store.service.user.common;
 
 import manage.store.consts.Tags;
-import manage.store.exception.common.DatabaseOperationException;
+import manage.store.exception.common.db.DatabaseOperationException;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.DeleteFlag;
 import manage.store.model.user.user.User;
 import manage.store.model.user.value.UserId;
-import manage.store.repository.user.UserAccountRepository;
+import manage.store.repository.user.account.UserAccountRepository;
 import manage.store.testUtils.user.UserData;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

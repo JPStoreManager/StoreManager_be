@@ -2,12 +2,12 @@ package manage.store.service.user.common;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import manage.store.exception.common.DatabaseOperationException;
+import manage.store.exception.common.db.DatabaseOperationException;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.DeleteFlag;
 import manage.store.model.user.user.User;
 import manage.store.model.user.value.UserId;
-import manage.store.repository.user.UserAccountRepository;
+import manage.store.repository.user.account.UserAccountRepository;
 import org.springframework.stereotype.Service;
 
 /**

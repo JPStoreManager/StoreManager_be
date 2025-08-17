@@ -1,19 +1,18 @@
-package manage.store.repository.user;
+package manage.store.repository.user.account;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.user.user.User;
-import manage.store.repository.user.mapper.UserAccountMapper;
-import manage.store.utils.ExceptionUtils;
-import org.springframework.dao.DataIntegrityViolationException;
+import manage.store.repository.BaseRepository;
+import manage.store.repository.user.account.mapper.UserAccountMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class UserAccountRepositoryImpl implements UserAccountRepository {
+public class UserAccountRepositoryImpl extends BaseRepository implements UserAccountRepository {
 
     private final UserAccountMapper userAccountMapper;
 
@@ -21,7 +20,12 @@ public class UserAccountRepositoryImpl implements UserAccountRepository {
     public User selectUserById(String id) {
         if(!StringUtils.hasText(id)) throw new InvalidParameterException("User ID is empty");
 
-        return userAccountMapper.selectUserById(id);
+        try {
+            return userAccountMapper.selectUserById(id);
+        } catch (Exception e) {
+            handleAndWrapException(e, "selectUserById", new Object[]{id});
+            return null;
+        }
     }
 
     @Override
@@ -30,8 +34,8 @@ public class UserAccountRepositoryImpl implements UserAccountRepository {
 
         try {
             return userAccountMapper.insertUser(user);
-        } catch (DataIntegrityViolationException e) {
-            log.info("Fail to insert user. User: {}, Error message: {}", user, ExceptionUtils.getExceptionErrorMsg(e));
+        } catch (Exception e) {
+            handleAndWrapException(e, "insertUser", new Object[]{user});
             return 0;
         }
     }
@@ -42,8 +46,8 @@ public class UserAccountRepositoryImpl implements UserAccountRepository {
 
         try {
             return userAccountMapper.updateUser(user);
-        } catch (DataIntegrityViolationException e) {
-            log.info("Fail to update user. User: {}, Error message: {}", user, ExceptionUtils.getExceptionErrorMsg(e));
+        } catch (Exception e) {
+            handleAndWrapException(e, "updateUser", new Object[]{user});
             return 0;
         }
     }

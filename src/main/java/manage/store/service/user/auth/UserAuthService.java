@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 public interface UserAuthService {
 
     /**
-     * 사용자 계정이 활성화 상태인지 확인
+     * 사용자 계정이 삭제되지 않은 상태인지 확인
      * @param user 사용자 정보
      * @return boolean - 사용자 계정이 활성화 상태이면 true, 그렇지 않으면 false
      */

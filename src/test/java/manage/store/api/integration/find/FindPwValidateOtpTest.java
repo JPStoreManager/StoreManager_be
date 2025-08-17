@@ -6,7 +6,7 @@ import manage.store.dto.user.find.FindPwSendOtpRequest;
 import manage.store.dto.user.find.FindPwSendOtpResponse;
 import manage.store.dto.user.find.FindPwValidateOtpRequest;
 import manage.store.dto.user.find.FindUserPwSession;
-import manage.store.repository.user.mapper.UserAccountMapper;
+import manage.store.repository.user.account.mapper.UserAccountMapper;
 import manage.store.utils.ApiPathUtils;
 import manage.store.model.common.value.SuccessFlag;
 import manage.store.model.user.user.User;

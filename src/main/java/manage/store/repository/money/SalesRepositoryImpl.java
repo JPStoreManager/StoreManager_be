@@ -2,8 +2,9 @@ package manage.store.repository.money;
 
 
 import lombok.RequiredArgsConstructor;
+import manage.store.repository.BaseRepository;
 import manage.store.utils.DateUtils;
-import manage.store.exception.common.DatabaseOperationException;
+import manage.store.exception.common.db.DatabaseOperationException;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.repository.money.mapper.SalesMapper;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class SalesRepositoryImpl implements SalesRepository {
+public class SalesRepositoryImpl extends BaseRepository implements SalesRepository {
 
     private final SalesMapper salesMapper;
 
@@ -25,7 +26,12 @@ public class SalesRepositoryImpl implements SalesRepository {
             throw new InvalidParameterException("Invalid parameters for selecting sales. Branch code: " + branchCd + ", Registered date: " + year);
         }
 
-        return salesMapper.selectByYear(branchCd, year);
+        try {
+            return salesMapper.selectByYear(branchCd, year);
+        } catch (Exception e) {
+            handleAndWrapException(e, "selectSalesByYear", new Object[]{branchCd, year});
+            return null;
+        }
     }
 
     @Override
@@ -34,7 +40,12 @@ public class SalesRepositoryImpl implements SalesRepository {
             throw new InvalidParameterException("Invalid parameters for selecting sales. Branch code: " + branchCd + ", Registered date: " + year + ", Month: " + month);
         }
 
-        return salesMapper.selectByMonth(branchCd, year, month);
+        try {
+            return salesMapper.selectByMonth(branchCd, year, month);
+        } catch (Exception e) {
+            handleAndWrapException(e, "selectSalesByMonth", new Object[]{branchCd, year, month});
+            return null;
+        }
     }
 
     @Override
@@ -50,8 +61,9 @@ public class SalesRepositoryImpl implements SalesRepository {
                 throw new DataIntegrityViolationException("Failed to insert sales data. Updated count: " + insertedCnt);
             }
             return insertedCnt;
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Failed to insert sales data. Error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            handleAndWrapException(e, "insertSales", new Object[]{sales});
+            return 0; // In case of exception, return 0 to indicate failure
         }
     }
 
@@ -68,8 +80,9 @@ public class SalesRepositoryImpl implements SalesRepository {
                 throw new DataIntegrityViolationException("Failed to update sales data. Updated count: " + updatedCnt);
             }
             return updatedCnt;
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Failed to update sales data. Error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            handleAndWrapException(e, "updateSales", new Object[]{sales});
+            return 0; // In case of exception, return 0 to indicate failure
         }
     }
 

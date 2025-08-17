@@ -1,4 +1,4 @@
-package manage.store.repository.user;
+package manage.store.repository.user.account;
 
 import manage.store.model.user.user.User;
 import manage.store.exception.common.InvalidParameterException;

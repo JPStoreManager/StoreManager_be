@@ -1,29 +1,41 @@
 package manage.store.service.user.auth.model;
 
+import lombok.Getter;
+import lombok.ToString;
+import manage.store.model.common.branch.StoreBranch;
 import manage.store.model.user.value.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
 
+@Getter
+@ToString
 public class LoginUserDetails implements UserDetails{
 
     private final UserId userId;
     private final String password;
     private final UserName name;
     private final UserAuthCode authCode;
+    private final List<StoreBranch> accessibleBranches;
 
-    public LoginUserDetails(UserId userId, String password, UserName name, UserAuthCode authCode) {
-        if (userId == null || name == null || authCode == null) {
+    public LoginUserDetails(UserId userId, String password, UserName name, UserAuthCode authCode, List<StoreBranch> accessibleBranches) {
+        if (userId == null || !StringUtils.hasText(password) || name == null || authCode == null || accessibleBranches == null) {
             throw new IllegalArgumentException("UserId, UserName, and UserAuthCode must not be null");
+        }
+
+        if(!authCode.equals(UserAuthCode.ROLE_ADMIN) && accessibleBranches.isEmpty()) {
+            throw new IllegalArgumentException("Accessible branches must not be empty for non-admin users");
         }
 
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.authCode = authCode;
+        this.accessibleBranches = accessibleBranches;
     }
 
     @Override
@@ -39,14 +51,6 @@ public class LoginUserDetails implements UserDetails{
     @Override
     public String getUsername() {
         return userId.value();
-    }
-
-    public UserId getUserId() {
-        return userId;
-    }
-
-    public UserName getName() {
-        return name;
     }
 
     @Override

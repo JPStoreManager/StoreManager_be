@@ -13,7 +13,7 @@ import manage.store.model.user.value.OtpNo;
 import manage.store.model.user.value.UserId;
 import manage.store.consts.Message;
 import manage.store.consts.Tags;
-import manage.store.repository.user.UserAccountRepository;
+import manage.store.repository.user.account.UserAccountRepository;
 import manage.store.service.common.mail.MailService;
 import manage.store.service.user.auth.UserAuthService;
 import manage.store.testUtils.user.UserData;

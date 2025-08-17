@@ -1,6 +1,6 @@
 package manage.store.repository.money;
 
-import manage.store.exception.common.DatabaseOperationException;
+import manage.store.exception.common.db.DatabaseOperationException;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.money.sales.DailySales.DailySales;
 

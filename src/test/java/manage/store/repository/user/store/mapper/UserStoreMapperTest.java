@@ -1,12 +1,10 @@
-package manage.store.repository.relation.user_store.mapper;
+package manage.store.repository.user.store.mapper;
 
 import manage.store.config.db.DBConfiguration;
 import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
 import manage.store.model.common.branch.StoreBranch;
-import manage.store.model.common.value.UseYn;
 import manage.store.model.user.value.UserId;
-import manage.store.repository.relation.user_store.UserStoreRelationMapper;
 import manage.store.testUtils.relation.UserStoreMapTestUtils;
 import manage.store.testUtils.user.UserTestUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -29,10 +27,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles(Profiles.TEST)
 @ContextConfiguration(classes = DBConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserStoreRelationMapperTest {
+class UserStoreMapperTest {
 
     @Autowired
-    private UserStoreRelationMapper userStoreRelationMapper;
+    private UserStoreMapper userStoreMapper;
 
     @Test
     @DisplayName("selectStoreBranchesRelatedWithUser 성공")
@@ -41,7 +39,7 @@ class UserStoreRelationMapperTest {
         final UserId userId = UserTestUtils.DUMMY_USER1.getId();
 
         // When
-        List<StoreBranch> actual = userStoreRelationMapper.selectStoreBranchesRelatedWithUser(userId.value());
+        List<StoreBranch> actual = userStoreMapper.selectStoreBranchesRelatedWithUser(userId.value());
 
         // Then
         assertThat(actual).isNotNull();
@@ -60,7 +58,7 @@ class UserStoreRelationMapperTest {
         final UserId userId = UserTestUtils.DUMMY_USER3.getId();
 
         // When
-        List<StoreBranch> actual = userStoreRelationMapper.selectStoreBranchesRelatedWithUser(userId.value());
+        List<StoreBranch> actual = userStoreMapper.selectStoreBranchesRelatedWithUser(userId.value());
 
         // Then
         assertThat(actual).isNotNull();
@@ -74,7 +72,7 @@ class UserStoreRelationMapperTest {
         final UserId userId = UserTestUtils.DUMMY_USER4.getId();
 
         // When
-        List<StoreBranch> actual = userStoreRelationMapper.selectStoreBranchesRelatedWithUser(userId.value());
+        List<StoreBranch> actual = userStoreMapper.selectStoreBranchesRelatedWithUser(userId.value());
 
         // Then
         assertThat(actual).isNotNull();
@@ -88,7 +86,7 @@ class UserStoreRelationMapperTest {
         final UserId userId = UserTestUtils.DUMMY_USER2.getId();
 
         // When
-        List<StoreBranch> actual = userStoreRelationMapper.selectStoreBranchesRelatedWithUser(userId.value());
+        List<StoreBranch> actual = userStoreMapper.selectStoreBranchesRelatedWithUser(userId.value());
 
         // Then
         assertThat(actual).isNotNull();
@@ -102,7 +100,7 @@ class UserStoreRelationMapperTest {
         final String userId = "not-exist-user";
 
         // When
-        List<StoreBranch> actual = userStoreRelationMapper.selectStoreBranchesRelatedWithUser(userId);
+        List<StoreBranch> actual = userStoreMapper.selectStoreBranchesRelatedWithUser(userId);
 
         // Then
         assertThat(actual).isNotNull();
