@@ -6,7 +6,7 @@ import manage.store.dto.user.login.LoginRequest;
 import manage.store.dto.user.login.LoginResponse;
 import manage.store.model.common.value.SuccessFlag;
 import manage.store.model.user.user.User;
-import manage.store.repository.user.UserAccountRepository;
+import manage.store.repository.user.account.UserAccountRepository;
 import manage.store.service.user.auth.UserAuthService;
 import manage.store.utils.SecretUtils;
 import org.springframework.stereotype.Service;

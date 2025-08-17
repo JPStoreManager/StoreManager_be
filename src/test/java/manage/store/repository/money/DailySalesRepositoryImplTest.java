@@ -1,7 +1,7 @@
 package manage.store.repository.money;
 
 import manage.store.consts.Tags;
-import manage.store.exception.common.DatabaseOperationException;
+import manage.store.exception.common.db.*;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.user.value.UserId;
@@ -14,8 +14,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.QueryTimeoutException;
+import org.springframework.jdbc.BadSqlGrammarException;
 
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +36,7 @@ class DailySalesRepositoryImplTest {
     @InjectMocks
     private SalesRepositoryImpl salesRepository;
 
+    /** selectSalesByYear */
     @Test
     @DisplayName("selectSalesByYear 성공")
     void selectSalesByYear_success() {
@@ -62,6 +66,58 @@ class DailySalesRepositoryImplTest {
         assertThrows(InvalidParameterException.class, () -> salesRepository.selectSalesByYear(null, null));
     }
 
+    @Test
+    @DisplayName("selectSalesByYear 실패 - DB 조회 중 Non-transient 예외 발생")
+    void selectSalesByYear_fail_dbNonTransientException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024;
+        given(salesMapper.selectByYear(branchCd, year))
+                .willThrow(new BadSqlGrammarException("test", "invalid sql", new SQLException()));
+
+        // When & Then
+        assertThrows(DbOperNonTransientException.class, () -> salesRepository.selectSalesByYear(branchCd, year));
+    }
+
+    @Test
+    @DisplayName("selectSalesByYear 실패 - DB 조회 중 Transient 예외 발생")
+    void selectSalesByYear_fail_dbTransientException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024;
+        given(salesMapper.selectByYear(branchCd, year)).willThrow(new QueryTimeoutException("DB Error"));
+
+        // When & Then
+        assertThrows(DbOperTransientException.class, () -> salesRepository.selectSalesByYear(branchCd, year));
+    }
+
+    @Test
+    @DisplayName("selectSalesByYear 실패 - DB 조회 중 일반 DataAccess 예외 발생")
+    void selectSalesByYear_fail_dbDataAccessException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024;
+        given(salesMapper.selectByYear(branchCd, year))
+                .willThrow(new DataAccessException("General DB Error"){});
+
+        // When & Then
+        assertThrows(DbOperDataAccessException.class, () -> salesRepository.selectSalesByYear(branchCd, year));
+    }
+
+    @Test
+    @DisplayName("selectSalesByYear 실패 - DB 조회 중 기타 예외 발생")
+    void selectSalesByYear_fail_dbOtherException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024;
+        given(salesMapper.selectByYear(branchCd, year))
+                .willThrow(new RuntimeException("Unexpected error"));
+
+        // When & Then
+        assertThrows(DbOperOtherException.class, () -> salesRepository.selectSalesByYear(branchCd, year));
+    }
+
+    /** selectSalesByMonth */
     @Test
     @DisplayName("selectSalesByMonth 성공")
     void selectSalesByMonth_success() {
@@ -93,6 +149,58 @@ class DailySalesRepositoryImplTest {
         assertThrows(InvalidParameterException.class, () -> salesRepository.selectSalesByMonth("B001", 2024, 13));
     }
 
+    @Test
+    @DisplayName("selectSalesByMonth 실패 - DB 조회 중 Non-transient 예외 발생")
+    void selectSalesByMonth_fail_dbNonTransientException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024, month = 5;
+        given(salesMapper.selectByMonth(branchCd, year, month))
+                .willThrow(new BadSqlGrammarException("test", "invalid sql", new SQLException()));
+
+        // When & Then
+        assertThrows(DbOperNonTransientException.class, () -> salesRepository.selectSalesByMonth(branchCd, year, month));
+    }
+
+    @Test
+    @DisplayName("selectSalesByMonth 실패 - DB 조회 중 Transient 예외 발생 ")
+    void selectSalesByMonth_fail_dbTransientException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024, month = 5;
+        given(salesMapper.selectByMonth(branchCd, year, month)).willThrow(new QueryTimeoutException("DB Error"));
+
+        // When & Then
+        assertThrows(DbOperTransientException.class, () -> salesRepository.selectSalesByMonth(branchCd, year, month));
+    }
+
+    @Test
+    @DisplayName("selectSalesByMonth 실패 - DB 조회 중 일반 DataAccess 예외 발생")
+    void selectSalesByMonth_fail_dbDataAccessException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024, month = 5;
+        given(salesMapper.selectByMonth(branchCd, year, month))
+                .willThrow(new DataAccessException("General DB Error") {});
+
+        // When & Then
+        assertThrows(DbOperDataAccessException.class, () -> salesRepository.selectSalesByMonth(branchCd, year, month));
+    }
+
+    @Test
+    @DisplayName("selectSalesByMonth 실패 - DB 조회 중 기타 예외 발생")
+    void selectSalesByMonth_fail_dbOtherException() {
+        // Given
+        final String branchCd = "B001";
+        final int year = 2024, month = 5;
+        given(salesMapper.selectByMonth(branchCd, year, month))
+                .willThrow(new RuntimeException("Unexpected error"));
+
+        // When & Then
+        assertThrows(DbOperOtherException.class, () -> salesRepository.selectSalesByMonth(branchCd, year, month));
+    }
+
+    /** insertSales */
     @Test
     @DisplayName("insertSales 성공")
     void insertSales_success() {
@@ -133,25 +241,53 @@ class DailySalesRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("insertSales 실패 - DB 예외")
-    void insertSales_fail_dbException() {
+    @DisplayName("insertSales 실패 - DB 조회 중 Non-transient 예외 발생")
+    void insertSales_fail_dbNonTransientException() {
+        // Given
         final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
-        given(salesMapper.insert(sales)).willThrow(new DataIntegrityViolationException("DB Error"));
-        assertThrows(DatabaseOperationException.class, () -> salesRepository.insertSales(sales));
+        given(salesMapper.insert(sales))
+                .willThrow(new BadSqlGrammarException("test", "invalid sql", new SQLException()));
+
+        // When & Then
+        assertThrows(DbOperNonTransientException.class, () -> salesRepository.insertSales(sales));
     }
 
     @Test
-    @DisplayName("insertSales 실패 - 업데이트 카운트가 0 또는 2 이상")
-    void insertSales_fail_invalidUpdateCount() {
+    @DisplayName("insertSales 실패 - DB 조회 중 Transient 예외 발생")
+    void insertSales_fail_dbTransientException() {
+        // Given
         final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
-        given(salesMapper.insert(sales)).willReturn(0);
-        assertThrows(DatabaseOperationException.class, () -> salesRepository.insertSales(sales));
+        given(salesMapper.insert(sales)).willThrow(new QueryTimeoutException("DB Error"));
 
-        given(salesMapper.insert(sales)).willReturn(2);
-        assertThrows(DatabaseOperationException.class, () -> salesRepository.insertSales(sales));
+        // When & Then
+        assertThrows(DbOperTransientException.class, () -> salesRepository.insertSales(sales));
     }
 
+    @Test
+    @DisplayName("insertSales 실패 - DB 조회 중 일반 DataAccess 예외 발생")
+    void insertSales_fail_dbDataAccessException() {
+        // Given
+        final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
+        given(salesMapper.insert(sales))
+                .willThrow(new DataAccessException("General DB Error") {});
 
+        // When & Then
+        assertThrows(DbOperDataAccessException.class, () -> salesRepository.insertSales(sales));
+    }
+
+    @Test
+    @DisplayName("insertSales 실패 - DB 조회 중 기타 예외 발생")
+    void insertSales_fail_dbOtherException() {
+        // Given
+        final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
+        given(salesMapper.insert(sales))
+                .willThrow(new RuntimeException("Unexpected error"));
+
+        // When & Then
+        assertThrows(DbOperOtherException.class, () -> salesRepository.insertSales(sales));
+    }
+
+    /** updateSales */
     @Test
     @DisplayName("updateSales 성공")
     void updateSales_success() {
@@ -190,23 +326,58 @@ class DailySalesRepositoryImplTest {
         assertThrows(InvalidParameterException.class, () -> salesRepository.updateSales(s4));
     }
 
+    /**
+     * DB 조회 중 Non-transient 예외 발생
+     * DB 조회 중 Transient 예외 발생
+     * DB 조회 중 일반 DataAccess 예외 발생
+     * DB 조회 중 기타 예외 발생
+     * 에 대한 테스트 코드
+     */
     @Test
-    @DisplayName("updateSales 실패 - DB 예외")
-    void updateSales_fail_dbException() {
+    @DisplayName("updateSales 실패 - DB 조회 중 Non-transient 예외 발생")
+    void updateSales_fail_dbNonTransientException() {
+        // Given
         final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
-        given(salesMapper.update(sales)).willThrow(new DataIntegrityViolationException("DB Error"));
-        assertThrows(DatabaseOperationException.class, () -> salesRepository.updateSales(sales));
+        given(salesMapper.update(sales))
+                .willThrow(new BadSqlGrammarException("test", "invalid sql", new SQLException()));
+
+        // When & Then
+        assertThrows(DbOperNonTransientException.class, () -> salesRepository.updateSales(sales));
     }
 
     @Test
-    @DisplayName("updateSales 실패 - 업데이트 카운트가 0 또는 2 이상")
-    void updateSales_fail_invalidUpdateCount() {
+    @DisplayName("updateSales 실패 - DB 조회 중 Transient 예외 발생")
+    void updateSales_fail_dbTransientException() {
+        // Given
         final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
-        given(salesMapper.update(sales)).willReturn(0);
-        assertThrows(DatabaseOperationException.class, () -> salesRepository.updateSales(sales));
+        given(salesMapper.update(sales)).willThrow(new QueryTimeoutException("DB Error"));
 
-        given(salesMapper.update(sales)).willReturn(2);
-        assertThrows(DatabaseOperationException.class, () -> salesRepository.updateSales(sales));
+        // When & Then
+        assertThrows(DbOperTransientException.class, () -> salesRepository.updateSales(sales));
+    }
+
+    @Test
+    @DisplayName("updateSales 실패 - DB 조회 중 일반 DataAccess 예외 발생")
+    void updateSales_fail_dbDataAccessException() {
+        // Given
+        final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
+        given(salesMapper.update(sales))
+                .willThrow(new DataAccessException("General DB Error") {});
+
+        // When & Then
+        assertThrows(DbOperDataAccessException.class, () -> salesRepository.updateSales(sales));
+    }
+
+    @Test
+    @DisplayName("updateSales 실패 - DB 조회 중 기타 예외 발생")
+    void updateSales_fail_dbOtherException() {
+        // Given
+        final DailySales sales = SalesUtils.createSales("B001", "2024-06-01", new UserId("admin"));
+        given(salesMapper.update(sales))
+                .willThrow(new RuntimeException("Unexpected error"));
+
+        // When & Then
+        assertThrows(DbOperOtherException.class, () -> salesRepository.updateSales(sales));
     }
 }
 

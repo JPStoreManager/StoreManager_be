@@ -1,4 +1,4 @@
-package manage.store.repository.user.mapper;
+package manage.store.repository.user.account.mapper;
 
 import manage.store.model.user.user.User;
 import org.apache.ibatis.annotations.Mapper;

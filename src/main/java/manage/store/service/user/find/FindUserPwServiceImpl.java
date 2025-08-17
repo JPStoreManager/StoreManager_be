@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import manage.store.dto.common.BaseResponse;
 import manage.store.dto.user.find.*;
-import manage.store.repository.user.UserAccountRepository;
+import manage.store.repository.user.account.UserAccountRepository;
 import manage.store.service.common.mail.MailService;
 import manage.store.service.user.auth.UserAuthService;
 import manage.store.utils.SecretUtils;

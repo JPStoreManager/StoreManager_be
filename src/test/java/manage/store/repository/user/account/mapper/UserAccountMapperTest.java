@@ -1,4 +1,4 @@
-package manage.store.repository.user.mapper;
+package manage.store.repository.user.account.mapper;
 
 import manage.store.config.db.DBConfiguration;
 import manage.store.consts.Profiles;

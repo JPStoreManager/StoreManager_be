@@ -5,6 +5,7 @@ import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
 import manage.store.model.common.commonCode.CommonCode;
 import manage.store.model.common.value.UseYn;
+import manage.store.repository.common.code.mapper.CommonCodeMapper;
 import manage.store.testUtils.common.CommonCodeTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

@@ -1,4 +1,4 @@
-package manage.store.repository.common.mapper;
+package manage.store.repository.common.code.mapper;
 
 import manage.store.model.common.commonCode.CommonCode;
 import manage.store.model.common.value.UseYn;

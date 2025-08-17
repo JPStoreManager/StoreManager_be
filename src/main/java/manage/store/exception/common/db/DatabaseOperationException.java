@@ -1,4 +1,4 @@
-package manage.store.exception.common;
+package manage.store.exception.common.db;
 
 public class DatabaseOperationException extends RuntimeException {
     public DatabaseOperationException(String message) {

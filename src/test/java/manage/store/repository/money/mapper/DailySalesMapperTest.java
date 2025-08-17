@@ -6,7 +6,7 @@ import manage.store.consts.Tags;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
-import manage.store.testUtils.money.BranchUtils;
+import manage.store.testUtils.common.StoreBranchTestUtils;
 import manage.store.testUtils.money.SalesUtils;
 import manage.store.testUtils.util.BaseDockerTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class DailySalesMapperTest extends BaseDockerTest {
 
     @BeforeEach
     public void setUp() {
-        final String branchCd = BranchUtils.ExistBranchCd;
+        final String branchCd = StoreBranchTestUtils.DUMMY_BRANCH1.getBranchCd();
         salesList = new DailySales[3];
         for (int i = 1; i <= salesList.length; i++) {
             DailySales sales = SalesUtils.createSales(branchCd, "2010-01-0" + i, new UserId("system"));
@@ -139,7 +139,7 @@ class DailySalesMapperTest extends BaseDockerTest {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         final String tomorrowDate = sdf.format(calendar.getTime());
 
-        final DailySales sales = SalesUtils.createSales(BranchUtils.ExistBranchCd, tomorrowDate, salesList[0].getCreatedBy());
+        final DailySales sales = SalesUtils.createSales(StoreBranchTestUtils.DUMMY_BRANCH1.getBranchCd(), tomorrowDate, salesList[0].getCreatedBy());
 
         // When
         final int result = salesMapper.insert(sales);

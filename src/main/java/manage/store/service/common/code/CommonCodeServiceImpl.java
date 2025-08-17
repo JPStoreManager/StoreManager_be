@@ -1,7 +1,7 @@
 package manage.store.service.common.code;
 
 import lombok.RequiredArgsConstructor;
-import manage.store.repository.common.mapper.CommonCodeMapper;
+import manage.store.repository.common.code.mapper.CommonCodeMapper;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.commonCode.CommonCode;
 import manage.store.model.common.value.CommonCodeCd;

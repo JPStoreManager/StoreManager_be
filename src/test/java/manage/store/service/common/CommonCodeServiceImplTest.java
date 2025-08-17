@@ -5,7 +5,7 @@ import manage.store.model.common.commonCode.CommonCode;
 import manage.store.model.common.value.CommonCodeCd;
 import manage.store.model.common.value.CommonCodeGrpCd;
 import manage.store.model.common.value.UseYn;
-import manage.store.repository.common.mapper.CommonCodeMapper;
+import manage.store.repository.common.code.mapper.CommonCodeMapper;
 import manage.store.service.common.code.CommonCodeServiceImpl;
 import manage.store.testUtils.common.CommonCodeTestUtils;
 import org.assertj.core.api.Assertions;
