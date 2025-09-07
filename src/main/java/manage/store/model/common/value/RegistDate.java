@@ -58,7 +58,7 @@ public class RegistDate {
             dateFormat.parse(value);
 
             return true;
-        }catch (ParseException e){
+        } catch (ParseException e){
             return false;
         }
     }

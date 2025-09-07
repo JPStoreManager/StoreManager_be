@@ -1,5 +1,7 @@
 package manage.store.model.money.sales.value;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public class Money {
 
     private Long amount;
@@ -10,6 +12,7 @@ public class Money {
         this.amount = amount;
     }
 
+    @JsonValue
     public Long value() {
         return amount;
     }
