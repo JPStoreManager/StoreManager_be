@@ -3,6 +3,7 @@ package manage.store.service.money;
 import lombok.RequiredArgsConstructor;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.model.common.value.RegistDate;
 import manage.store.repository.money.SalesRepository;
 import manage.store.utils.DateUtils;
 import manage.store.model.money.sales.DailySales.DailySales;
@@ -50,12 +51,12 @@ public class SalesServiceImpl implements SalesService {
      * @return 날짜별 매출 데이터가 설정된 GetMonthSalesResponse 객체
      */
     public GetMonthSalesResponse setMonthSalesResponse(GetMonthSalesResponse response, String branchCd, int year, int month) {
-        final Map<String, DailySales> salesByRegisteredDate = salesRepository.selectSalesByMonth(branchCd, year, month).stream()
+        final Map<RegistDate, DailySales> salesByRegisteredDate = salesRepository.selectSalesByMonth(branchCd, year, month).stream()
                 .collect(Collectors.toMap(
-                        sales -> sales.getRegistDate(),
+                        DailySales::getRegistDate,
                         sales -> sales,
                         (existing, replacement) -> existing, // 중복된 키가 있을 경우 기존 값을 유지
-                        () -> new HashMap<>()
+                        HashMap::new
                 ));
 
         Money monthlyTotalSales = new Money(0L), weeklyTotalSales = new Money(0L);
@@ -63,17 +64,17 @@ public class SalesServiceImpl implements SalesService {
             final DailySales salesData = salesByRegisteredDate.get(dailySales.getRegistDate());
             if(salesData == null) continue;
 
-            final String registeredDate = salesData.getRegistDate();
+            final RegistDate registeredDate = salesData.getRegistDate();
             final Money cardSales = salesData.getCardSales(), cashSales = salesData.getCashSales();
-            final Money daySales = new Money(cardSales.value() + cashSales.value());
+            final Money dailyTotalSales = new Money(cardSales.value() + cashSales.value());
 
-            monthlyTotalSales = monthlyTotalSales.add(daySales);
-            weeklyTotalSales = getWeeklyTotalSales(registeredDate, weeklyTotalSales, daySales);
+            monthlyTotalSales = monthlyTotalSales.add(dailyTotalSales);
+            weeklyTotalSales = getWeeklyTotalSales(registeredDate, weeklyTotalSales, dailyTotalSales);
 
             dailySales.setCardSales(salesData.getCardSales());
             dailySales.setCashSales(salesData.getCashSales());
-            dailySales.setTotalSales(daySales);
-            dailySales.setCardPercentage((int)(cardSales.value() * 100 / daySales.value()));
+            dailySales.setTotalSales(dailyTotalSales);
+            dailySales.setCardPercentage((int)(cardSales.value() * 100 / dailyTotalSales.value()));
             dailySales.setWeeklyTotalSales(weeklyTotalSales);
             dailySales.setMonthTotalSales(monthlyTotalSales);
             dailySales.setComment(salesData.getComment());
@@ -97,10 +98,10 @@ public class SalesServiceImpl implements SalesService {
 
         for (int i = 1; i <= lengthOfMonthDays; i++) {
             GetMonthSalesResponse.DailySales dailySales = new GetMonthSalesResponse.DailySales();
-            String date = String.format("%04d-%02d-%02d", year, month, i);
+            RegistDate registDate = new RegistDate(year, month, i);
 
             dailySales.setBranchCd(branchCd);
-            dailySales.setRegistDate(date);
+            dailySales.setRegistDate(registDate);
 
             monthlySales.add(dailySales);
         }
@@ -118,8 +119,8 @@ public class SalesServiceImpl implements SalesService {
      * @param daySales 특정 날짜의 매출
      * @return 주간 총 매출
      */
-    private Money getWeeklyTotalSales(String registeredDate, Money curWeeklyTotalSales, Money daySales) {
-        DayOfWeek dayOfWeek = DateUtils.getDayOfWeek(registeredDate);
+    private Money getWeeklyTotalSales(RegistDate registeredDate, Money curWeeklyTotalSales, Money daySales) {
+        DayOfWeek dayOfWeek = DateUtils.getDayOfWeek(registeredDate.value());
         if(dayOfWeek == DayOfWeek.MONDAY) {
             return daySales;
         } else {

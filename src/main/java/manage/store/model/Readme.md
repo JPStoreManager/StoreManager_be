@@ -19,3 +19,10 @@
         return new Money(amount);
     }
     ```
+  
+- 값 getter의 이름은 value로 통일한다.
+    ```
+    public Long value() {
+        return amount;
+    }
+    ```

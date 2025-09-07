@@ -3,6 +3,7 @@ package manage.store.service.money;
 import manage.store.consts.Tags;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -47,11 +47,11 @@ public class DailySalesServiceImplTest {
 
         final List<DailySales> sampleSales = getSampleSales(branchCd, year, month).stream()
                 .peek(s -> {
-                    int tmpMoney = Integer.parseInt(s.getRegistDate().substring(8, 10));
+                    int tmpMoney = Integer.parseInt(s.getRegistDate().value().substring(8, 10));
                     s.setCashSales(new Money((long) tmpMoney));
                     s.setCardSales(new Money((long) tmpMoney));
                 })
-                .filter(sales -> sales.getRegistDate().compareTo(String.format("%04d-%02d-%d", year, month, sampleSize)) <= 0)
+                .filter(sales -> sales.getRegistDate().value().compareTo(String.format("%04d-%02d-%d", year, month, sampleSize)) <= 0)
                 .collect(Collectors.toList());
 
         given(salesRepository.selectSalesByMonth(branchCd, year, month)).willReturn(sampleSales);
@@ -86,7 +86,7 @@ public class DailySalesServiceImplTest {
         for (GetMonthSalesResponse.DailySales actual : response.getMonthlySales()) {
             final GetMonthSalesResponse.DailySales expected = new GetMonthSalesResponse.DailySales();
             expected.setBranchCd(branchCd);
-            expected.setRegistDate(String.format("%04d-%02d-%02d", year, month, day));
+            expected.setRegistDate(new RegistDate(year, month, day));
             if(day <= sampleSize) {
                 expected.setCardSales(new Money((long) expectedSales[day - 1][0]));
                 expected.setCashSales(new Money((long) expectedSales[day - 1][1]));
@@ -130,7 +130,7 @@ public class DailySalesServiceImplTest {
 
         int day = 1;
         for (GetMonthSalesResponse.DailySales res : result.getMonthlySales()) {
-            expected.setRegistDate(String.format("%04d-%02d-%02d", year, month, day++));
+            expected.setRegistDate(new RegistDate(year, month, day++));
             validateSales(expected, res);
         }
 

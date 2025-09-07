@@ -1,6 +1,7 @@
 package manage.store.testUtils.money;
 
 import manage.store.model.common.value.DbUpdateDate;
+import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
@@ -20,7 +21,7 @@ public interface SalesUtils {
     static DailySales createSales(String branchCd, String registDate, UserId createdBy) {
         final DailySales sales = new DailySales();
         sales.setBranchCd(branchCd);
-        sales.setRegistDate(registDate);
+        sales.setRegistDate(new RegistDate(registDate));
         sales.setCardSales(new Money((long) (CommonUtils.getRandomInt() % 10000)));
         sales.setCashSales(new Money((long) (CommonUtils.getRandomInt() % 10000)));
         sales.setCreatedBy(createdBy);
@@ -34,7 +35,7 @@ public interface SalesUtils {
     static DailySales getNotExistSales() {
         final DailySales sales = new DailySales();
         sales.setBranchCd("NOT_EXIST");
-        sales.setRegistDate("1999-12-31");
+        sales.setRegistDate(new RegistDate("1999-12-31"));
 
         return sales;
     }

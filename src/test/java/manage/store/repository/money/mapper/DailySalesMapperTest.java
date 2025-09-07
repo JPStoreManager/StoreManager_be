@@ -3,6 +3,7 @@ package manage.store.repository.money.mapper;
 import manage.store.config.db.DBConfiguration;
 import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
+import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
@@ -59,7 +60,7 @@ class DailySalesMapperTest extends BaseDockerTest {
     void selectByYear_success() {
         // Given
         final String branchCd = salesList[0].getBranchCd();
-        final String year = salesList[0].getRegistDate().substring(0, 4);
+        final String year = salesList[0].getRegistDate().value().substring(0, 4);
 
         // When
         final List<DailySales> result = salesMapper.selectByYear(branchCd, Integer.parseInt(year));
@@ -81,7 +82,7 @@ class DailySalesMapperTest extends BaseDockerTest {
         // Given
         final DailySales notExistSales = SalesUtils.getNotExistSales();
         final String branchCd = notExistSales.getBranchCd();
-        final String year = notExistSales.getRegistDate().substring(0, 4);
+        final String year = notExistSales.getRegistDate().value().substring(0, 4);
 
         // When
         final List<DailySales> result = salesMapper.selectByYear(branchCd, Integer.parseInt(year));
@@ -96,8 +97,8 @@ class DailySalesMapperTest extends BaseDockerTest {
     void selectByMonth_success() {
         // Given
         final String branchCd = salesList[0].getBranchCd();
-        final Integer year = Integer.parseInt(salesList[0].getRegistDate().substring(0, 4));
-        final Integer month = Integer.parseInt(salesList[0].getRegistDate().substring(5, 7));
+        final Integer year = Integer.parseInt(salesList[0].getRegistDate().value().substring(0, 4));
+        final Integer month = Integer.parseInt(salesList[0].getRegistDate().value().substring(5, 7));
 
         // When
         final List<DailySales> result = salesMapper.selectByMonth(branchCd, year, month);
@@ -119,8 +120,8 @@ class DailySalesMapperTest extends BaseDockerTest {
         // Given
         final DailySales notExistSales = SalesUtils.getNotExistSales();
         final String branchCd = notExistSales.getBranchCd();
-        final Integer year = Integer.parseInt(notExistSales.getRegistDate().substring(0, 4));
-        final Integer month = Integer.parseInt(notExistSales.getRegistDate().substring(5, 7));
+        final Integer year = Integer.parseInt(notExistSales.getRegistDate().value().substring(0, 4));
+        final Integer month = Integer.parseInt(notExistSales.getRegistDate().value().substring(5, 7));
 
         // When
         final List<DailySales> result = salesMapper.selectByMonth(branchCd, year, month);
@@ -147,10 +148,10 @@ class DailySalesMapperTest extends BaseDockerTest {
         // Then
         assertEquals(1, result);
 
-        final int year = Integer.parseInt(sales.getRegistDate().substring(0, 4));
-        final int month = Integer.parseInt(sales.getRegistDate().substring(5, 7));
+        final int year = Integer.parseInt(sales.getRegistDate().value().substring(0, 4));
+        final int month = Integer.parseInt(sales.getRegistDate().value().substring(5, 7));
         final DailySales dbSales = salesMapper.selectByMonth(sales.getBranchCd(), year, month).stream()
-                .filter(s -> s.getRegistDate().equals(tomorrowDate))
+                .filter(s -> s.getRegistDate().equals(new RegistDate(tomorrowDate)))
                 .findFirst()
                 .orElse(null);
         SalesUtils.assertSales(sales, dbSales);
@@ -183,8 +184,8 @@ class DailySalesMapperTest extends BaseDockerTest {
         // Then
         assertEquals(1, result);
 
-        final int year = Integer.parseInt(expected.getRegistDate().substring(0, 4));
-        final int month = Integer.parseInt(expected.getRegistDate().substring(5, 7));
+        final int year = Integer.parseInt(expected.getRegistDate().value().substring(0, 4));
+        final int month = Integer.parseInt(expected.getRegistDate().value().substring(5, 7));
         final DailySales actual = salesMapper.selectByMonth(expected.getBranchCd(), year, month).stream()
                 .filter(s -> s.getRegistDate().equals(expected.getRegistDate()))
                 .findFirst().orElse(null);

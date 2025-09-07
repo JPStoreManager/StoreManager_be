@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.value.Money;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class GetMonthSalesResponse {
     public static class DailySales {
 
         private String branchCd;
-        private String registDate;
+        private RegistDate registDate;
         private Long cardSales;
         private Long cashSales;
         private Long totalSales;
