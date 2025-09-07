@@ -24,7 +24,7 @@ public class LoginUserDetails implements UserDetails{
 
     public LoginUserDetails(UserId userId, String password, UserName name, UserAuthCode authCode, List<StoreBranch> accessibleBranches) {
         if (userId == null || !StringUtils.hasText(password) || name == null || authCode == null || accessibleBranches == null) {
-            throw new IllegalArgumentException("UserId, UserName, and UserAuthCode must not be null");
+            throw new IllegalArgumentException("UserId, UserName, and UserAuthCode, AccessibleBranches must not be null");
         }
 
         if(!authCode.equals(UserAuthCode.ROLE_ADMIN) && accessibleBranches.isEmpty()) {

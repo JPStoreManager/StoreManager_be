@@ -58,7 +58,7 @@ public class DailySalesServiceImplTest {
 
         // When
         final GetMonthSalesRequest request = new GetMonthSalesRequest(branchCd, year, month);
-        final GetMonthSalesResponse response = salesService.getMonthSales(request);
+        final List<GetMonthSalesResponse.DailySales> response = salesService.getMonthSales(request);
 
         // Then
         assertNotNull(response);
@@ -83,7 +83,7 @@ public class DailySalesServiceImplTest {
         };
 
         int day = 1;
-        for (GetMonthSalesResponse.DailySales actual : response.getMonthlySales()) {
+        for (GetMonthSalesResponse.DailySales actual : response) {
             final GetMonthSalesResponse.DailySales expected = new GetMonthSalesResponse.DailySales();
             expected.setBranchCd(branchCd);
             expected.setRegistDate(new RegistDate(year, month, day));
@@ -94,6 +94,8 @@ public class DailySalesServiceImplTest {
                 expected.setCardPercentage(expectedSales[day - 1][3]);
                 expected.setWeeklyTotalSales(new Money((long) expectedSales[day - 1][4]));
                 expected.setMonthTotalSales(new Money((long) expectedSales[day - 1][5]));
+            } else {
+                expected.setMonthTotalSales(new Money((long) expectedSales[expectedSales.length - 1][5]));
             }
             day++;
             // TODO 매입 기능 추가 시 주석 해제
@@ -115,7 +117,7 @@ public class DailySalesServiceImplTest {
 
         // When
         final GetMonthSalesRequest request = new GetMonthSalesRequest(branchCd, year, month);
-        final GetMonthSalesResponse result = salesService.getMonthSales(request);
+        final List<GetMonthSalesResponse.DailySales> result = salesService.getMonthSales(request);
 
         // Then
         assertNotNull(result);
@@ -129,7 +131,7 @@ public class DailySalesServiceImplTest {
         expected.setMonthTotalSales(new Money(0L));
 
         int day = 1;
-        for (GetMonthSalesResponse.DailySales res : result.getMonthlySales()) {
+        for (GetMonthSalesResponse.DailySales res : result) {
             expected.setRegistDate(new RegistDate(year, month, day++));
             validateSales(expected, res);
         }

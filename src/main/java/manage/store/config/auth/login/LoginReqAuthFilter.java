@@ -1,4 +1,4 @@
-package manage.store.config.auth;
+package manage.store.config.auth.login;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

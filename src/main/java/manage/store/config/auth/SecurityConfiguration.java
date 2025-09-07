@@ -1,11 +1,12 @@
 package manage.store.config.auth;
 
 import lombok.RequiredArgsConstructor;
-import manage.store.config.auth.response.fail.AccessDeniedByLackAuthHandler;
-import manage.store.config.auth.response.fail.LoginFailureHandler;
-import manage.store.config.auth.response.fail.NotAuthorizedEntryPoint;
-import manage.store.config.auth.response.success.LoginSuccessHandler;
-import manage.store.config.auth.user.LoginUserDetailsServiceImpl;
+import manage.store.config.auth.login.LoginReqAuthFilter;
+import manage.store.config.auth.login.response.fail.AccessDeniedByLackAuthHandler;
+import manage.store.config.auth.login.response.fail.LoginFailureHandler;
+import manage.store.config.auth.login.response.fail.NotAuthorizedEntryPoint;
+import manage.store.config.auth.login.response.success.LoginSuccessHandler;
+import manage.store.config.auth.login.user.LoginUserDetailsServiceImpl;
 import manage.store.utils.ApiPathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +33,6 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // @PreAuthorize와 같은 메서드 단위 검증 애노테이션 활성화
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
