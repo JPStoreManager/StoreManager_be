@@ -1,6 +1,7 @@
 package manage.store.config.auth.abac.policy.sales;
 
 import lombok.RequiredArgsConstructor;
+import manage.store.config.auth.abac.policy.RolePolicy;
 import manage.store.model.user.value.UserAuthCode;
 import manage.store.service.user.auth.UserAuthService;
 import manage.store.service.user.auth.model.LoginUserDetails;
@@ -13,7 +14,7 @@ import java.util.Arrays;
  */
 @Component
 @RequiredArgsConstructor
-public class SalesAccessPolicy {
+public class SalesAccessPolicy implements RolePolicy {
 
     static final UserAuthCode[] ALLOWED_AUTH_CODES = {
         UserAuthCode.ROLE_ADMIN,
