@@ -12,6 +12,7 @@ import manage.store.model.user.user.User;
 import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
 import manage.store.api.integration.BaseIntegration;
+import manage.store.utils.GsonUtils;
 import manage.store.utils.SecretUtils;
 import manage.store.testUtils.user.UserData;
 import org.junit.jupiter.api.*;
@@ -85,7 +86,7 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         sendOtpRequest.setUserId(user.getId().value());
         sendOtpRequest.setEmail(user.getEmail().value());
 
-        final Gson gson = new Gson();
+        final Gson gson = GsonUtils.getGson();
         MvcResult sendOtpResult = mock.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(sendOtpRequest)))
@@ -132,7 +133,7 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         sendOtpRequest.setUserId(user.getId().value());
         sendOtpRequest.setEmail(user.getEmail().value());
 
-        final Gson gson = new Gson();
+        final Gson gson = GsonUtils.getGson();
         MvcResult sendOtpResult = mock.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(sendOtpRequest)))
@@ -189,7 +190,7 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         request.setNewPassword("1q2w3e4r");
 
         // When
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(put(UPDATE_PW_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(request)))
@@ -206,7 +207,7 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         sendOtpRequest.setUserId(user.getId().value());
         sendOtpRequest.setEmail(user.getEmail().value());
 
-        final Gson gson = new Gson();
+        final Gson gson = GsonUtils.getGson();
         MvcResult sendOtpResult = mock.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(sendOtpRequest)))
@@ -244,7 +245,8 @@ public class FindPwUpdatePwTest extends BaseIntegration {
                 ),
                 responseFields(
                         fieldWithPath("result").description("비밀번호 업데이트 성공 여부"),
-                        fieldWithPath("msg").description("성공 / 실패에 대한 메세지")
+                        fieldWithPath("msg").description("성공 / 실패에 대한 메세지"),
+                        fieldWithPath("timestamp").description("API 응답일시")
                 )));
     }
 }

@@ -20,6 +20,7 @@ import manage.store.model.user.value.Email;
 import manage.store.model.user.value.UserId;
 import manage.store.testUtils.user.UserData;
 import manage.store.testUtils.util.MockMvcUtils;
+import manage.store.utils.GsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -84,7 +85,7 @@ class FindUserPwControllerTest {
         doNothing().when(findUserPwSessionService).updateSession(SESSION_ID, request, FindUserPwSession.Step.SEND_OTP);
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(SEND_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(request)))
@@ -117,7 +118,7 @@ class FindUserPwControllerTest {
         };
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         for (String[] param : params) {
             FindPwSendOtpRequest request = new FindPwSendOtpRequest();
             request.setUserId(param[0]);
@@ -143,7 +144,7 @@ class FindUserPwControllerTest {
         given(findUserPwService.sendOtp(any())).willThrow(new InvalidParameterException());
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(SEND_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(request)))
@@ -164,7 +165,7 @@ class FindUserPwControllerTest {
                 .willReturn(new BaseResponse(SuccessFlag.N, Message.FIND_PW_SEND_OTP_FAIL_FAIL_TO_SEND_OTP));
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(SEND_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(request)))
@@ -199,7 +200,7 @@ class FindUserPwControllerTest {
         doNothing().when(findUserPwSessionService).updateSession(SESSION_ID, request, FindUserPwSession.Step.VALIDATE_OTP);
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(VALIDATE_OTP_PATH)
                 .header(FIND_PW_HEADER_ID, SESSION_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -221,7 +222,7 @@ class FindUserPwControllerTest {
         request.setOtp(user.getOtpNo().value());
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(VALIDATE_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(request)))
@@ -244,7 +245,7 @@ class FindUserPwControllerTest {
         given(findUserPwSessionService.getSession(any())).willReturn(null);
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(VALIDATE_OTP_PATH)
                 .header(FIND_PW_HEADER_ID, SESSION_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -268,7 +269,7 @@ class FindUserPwControllerTest {
                 .willReturn(new FindUserPwSession(FindUserPwSession.Step.NONE, new UserId(request.getUserId()), new Email(request.getEmail())));
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(VALIDATE_OTP_PATH)
                 .header(FIND_PW_HEADER_ID, SESSION_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -315,7 +316,7 @@ class FindUserPwControllerTest {
             request.setEmail(param[1]);
             request.setOtp(param[2]);
 
-            Gson gson = new Gson();
+            Gson gson = GsonUtils.getGson();
             mock.perform(post(VALIDATE_OTP_PATH)
                     .header(FIND_PW_HEADER_ID, SESSION_ID)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -343,7 +344,7 @@ class FindUserPwControllerTest {
         given(findUserPwService.validateOtp(any())).willThrow(new InvalidParameterException());
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(post(VALIDATE_OTP_PATH)
                 .header(FIND_PW_HEADER_ID, SESSION_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -402,7 +403,7 @@ class FindUserPwControllerTest {
         doNothing().when(findUserPwSessionService).removeSession(sessionId);
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(put(UPDATE_PW_PATH)
                 .header(FIND_PW_HEADER_ID, sessionId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -422,7 +423,7 @@ class FindUserPwControllerTest {
         request.setNewPassword("1234qwer");
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(put(UPDATE_PW_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(request)))
@@ -459,7 +460,7 @@ class FindUserPwControllerTest {
         };
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         for (String[] param : params) {
             FindPwUpdatePwRequest request = new FindPwUpdatePwRequest();
             request.setUserId(param[0]);
@@ -491,7 +492,7 @@ class FindUserPwControllerTest {
         given(findUserPwService.isValidStep(session, FindUserPwSession.Step.NEW_PW)).willReturn(false);
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(put(UPDATE_PW_PATH)
                 .header(FIND_PW_HEADER_ID, sessionId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -517,7 +518,7 @@ class FindUserPwControllerTest {
         given(findUserPwService.updatePassword(any())).willReturn(new BaseResponse(SuccessFlag.N, Message.FIND_PW_UPDATE_PW_FAIL_INVALID_PW));
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mock.perform(put(UPDATE_PW_PATH)
                 .header(FIND_PW_HEADER_ID, sessionId)
                 .contentType(MediaType.APPLICATION_JSON)

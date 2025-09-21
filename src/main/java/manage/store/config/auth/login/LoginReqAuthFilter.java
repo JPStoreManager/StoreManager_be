@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import manage.store.dto.user.login.LoginRequest;
 import manage.store.utils.ApiPathUtils;
+import manage.store.utils.GsonUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -42,7 +43,7 @@ public class LoginReqAuthFilter extends AbstractAuthenticationProcessingFilter {
 
     public LoginReqAuthFilter(HttpSecurity httpSecurity) {
         super(new AntPathRequestMatcher(LOGIN_API_PATH, LOGIN_API_HTTP_METHOD));
-        this.gson = new Gson();
+        this.gson = GsonUtils.getGson();
 
         // 인증 성공 시 SecurityContext를 저장할 SecurityContextRepository 타입 설정
         setSecurityContextRepository(getSecurityContextRepository(httpSecurity));

@@ -11,6 +11,7 @@ import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
 import manage.store.api.integration.BaseIntegration;
 import manage.store.testUtils.user.UserData;
+import manage.store.utils.GsonUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class FindPwSendOtpTest extends BaseIntegration {
         request.setEmail(user.getEmail().value());
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         ResultActions result = mockMvc.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(request)))
@@ -117,7 +118,7 @@ public class FindPwSendOtpTest extends BaseIntegration {
             request.setUserId(param[0]);
             request.setEmail(param[1]);
 
-            Gson gson = new Gson();
+            Gson gson = GsonUtils.getGson();
             mockMvc.perform(post(SEND_OTP_PATH)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(gson.toJson(request)))
@@ -135,7 +136,7 @@ public class FindPwSendOtpTest extends BaseIntegration {
         request.setEmail(user.getEmail().value());
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mockMvc.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(request)))
@@ -152,7 +153,7 @@ public class FindPwSendOtpTest extends BaseIntegration {
         request.setEmail("notMatchEmail@a.com");
 
         // When - Then
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mockMvc.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(request)))
@@ -170,7 +171,8 @@ public class FindPwSendOtpTest extends BaseIntegration {
                 responseFields(
                         fieldWithPath("result").description("계정 확인 및 otp 전송 성공 여부").type(String.class),
                         fieldWithPath("msg").description("otp 전송 성공/실패 메세지").type(String.class),
-                        fieldWithPath("sessionId").description("otp 전송에 성공하여 다음 단계가 진행될 때 인증에 사용할 토큰이 저장될 key").type(String.class).optional()
+                        fieldWithPath("sessionId").description("otp 전송에 성공하여 다음 단계가 진행될 때 인증에 사용할 토큰이 저장될 key").type(String.class).optional(),
+                        fieldWithPath("timestamp").description("api 응답 반환 시간")
                 )));
     }
 }
