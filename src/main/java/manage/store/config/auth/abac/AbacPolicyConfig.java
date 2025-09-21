@@ -1,8 +1,8 @@
 package manage.store.config.auth.abac;
 
 import lombok.RequiredArgsConstructor;
-import manage.store.service.auth.policy.branch.BranchAccessPolicy;
-import manage.store.service.auth.policy.sales.SalesAccessPolicy;
+import manage.store.config.auth.abac.policy.branch.BranchAccessPolicy;
+import manage.store.config.auth.abac.policy.sales.SalesAccessPolicy;
 import manage.store.service.user.auth.UserAuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

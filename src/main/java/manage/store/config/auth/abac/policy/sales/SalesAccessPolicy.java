@@ -1,4 +1,4 @@
-package manage.store.service.auth.policy.sales;
+package manage.store.config.auth.abac.policy.sales;
 
 import lombok.RequiredArgsConstructor;
 import manage.store.model.user.value.UserAuthCode;
