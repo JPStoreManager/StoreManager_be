@@ -1,5 +1,6 @@
 package manage.store.service.auth.policy.branch;
 
+import manage.store.config.auth.abac.policy.branch.BranchAccessPolicy;
 import manage.store.consts.Tags;
 import manage.store.model.common.branch.StoreBranch;
 import manage.store.model.user.user.User;
