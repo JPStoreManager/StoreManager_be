@@ -20,8 +20,9 @@
     }
     ```
   
-- 값 getter의 이름은 value로 통일한다.
+- 값 getter의 이름은 value로 통일한다. 반드시 @JsonValue도 추가합니다.
     ```
+    @JsonValue
     public Long value() {
         return amount;
     }

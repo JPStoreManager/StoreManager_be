@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public class UserId {
 
     private static final int MAX_USER_ID_LENGTH = 100;
@@ -13,6 +15,7 @@ public class UserId {
         this.id = userId;
     }
 
+    @JsonValue
     public String value() {
         return id;
     }

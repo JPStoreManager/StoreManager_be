@@ -3,7 +3,7 @@ package manage.store.config.auth.abac.policy.branch;
 import lombok.RequiredArgsConstructor;
 import manage.store.model.common.branch.StoreBranch;
 import manage.store.model.user.value.UserAuthCode;
-import manage.store.service.auth.policy.RolePolicy;
+import manage.store.config.auth.abac.policy.RolePolicy;
 import manage.store.service.user.auth.UserAuthService;
 import manage.store.service.user.auth.model.LoginUserDetails;
 import org.springframework.stereotype.Component;
