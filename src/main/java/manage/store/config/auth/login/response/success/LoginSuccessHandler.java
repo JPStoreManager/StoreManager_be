@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import manage.store.config.WebConfiguration;
 import manage.store.dto.user.login.LoginResponse;
 import manage.store.model.common.value.SuccessFlag;
+import manage.store.utils.GsonUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -24,7 +25,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Object credentials = authentication.getCredentials();
 
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         LoginResponse loginRes = new LoginResponse(SuccessFlag.Y);
 
         response.setStatus(HttpServletResponse.SC_OK);

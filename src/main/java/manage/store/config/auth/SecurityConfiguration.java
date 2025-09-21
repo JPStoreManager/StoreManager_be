@@ -102,10 +102,9 @@ public class SecurityConfiguration {
 //                )
                 .addFilterBefore(loginReqAuthFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
-                .exceptionHandling(a ->
-                        a.authenticationEntryPoint(authenticationEntryPoint()))
-                .exceptionHandling(e -> e
-                        // 인증은 성공했지만 권한 부족으로 접근하지 못했을 경우
+                .exceptionHandling(a -> a
+                        // 인증 과정에서 발생한 커스텀 오류를 잡는 Handler
+                        .authenticationEntryPoint(authenticationEntryPoint())
                         .accessDeniedHandler(new AccessDeniedByLackAuthHandler())
                 )
         ;

@@ -14,6 +14,7 @@ import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
 import manage.store.api.integration.BaseIntegration;
 import manage.store.testUtils.user.UserData;
+import manage.store.utils.GsonUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +86,7 @@ public class FindPwValidateOtpTest extends BaseIntegration {
         sendOtpRequest.setEmail(user.getEmail().value());
 
         // 1차로 otp 전송 단계로 통과 검증을 위한 세션 발급받기
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         MvcResult sendOtpResult = mockMvc.perform(post(SEND_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(sendOtpRequest))).andReturn();
@@ -145,7 +146,7 @@ public class FindPwValidateOtpTest extends BaseIntegration {
             request.setEmail(param[1]);
             request.setOtp(param[2]);
 
-            Gson gson = new Gson();
+            Gson gson = GsonUtils.getGson();
             mockMvc.perform(post(VALIDATE_OTP_PATH)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(gson.toJson(request)))
@@ -164,7 +165,7 @@ public class FindPwValidateOtpTest extends BaseIntegration {
         request.setOtp("123456");
 
         // When
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         mockMvc.perform(
                 post(VALIDATE_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +183,7 @@ public class FindPwValidateOtpTest extends BaseIntegration {
         sendOtpRequest.setEmail(user.getEmail().value());
 
         // 1차로 otp 전송 단계로 통과 검증을 위한 세션 발급받기
-        Gson gson = new Gson();
+        Gson gson = GsonUtils.getGson();
         MvcResult sendOtpResult = mockMvc.perform(post(SEND_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(sendOtpRequest))).andReturn();
@@ -228,7 +229,8 @@ public class FindPwValidateOtpTest extends BaseIntegration {
                 responseFields(
                         fieldWithPath("result").description("OTP 검증 성공 여부"),
                         fieldWithPath("msg").description("성공 / 실패에 대한 메세지"),
-                        fieldWithPath("sessionId").description("비밀번호 찾기 세션 ID")
+                        fieldWithPath("sessionId").description("비밀번호 찾기 세션 ID"),
+                        fieldWithPath("timestamp").description("API 응답일시")
                 )));
     }
 }

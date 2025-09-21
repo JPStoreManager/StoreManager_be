@@ -2,6 +2,7 @@ package manage.store.config.auth.login.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import manage.store.exception.common.auth.InvalidLoginUserDataException;
 import manage.store.model.common.branch.StoreBranch;
 import manage.store.model.user.user.User;
 import manage.store.model.user.value.UserId;
@@ -42,10 +43,15 @@ public class LoginUserDetailsServiceImpl implements UserDetailsService {
 
         List<StoreBranch> userAccessibleBranch = userStoreRepository.selectStoreBranchesRelatedWithUser(user.getId().value());
 
-        LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd(), userAccessibleBranch);
-        log.info("[loadUserByUsername] User found: {}", loginUserDetails);
+        try {
+            LoginUserDetails loginUserDetails = new LoginUserDetails(user.getId(), user.getPassword(), user.getName(), user.getAuthCd(), userAccessibleBranch);
+            log.info("[loadUserByUsername] User found: {}", loginUserDetails);
 
-        return loginUserDetails;
+            return loginUserDetails;
+        } catch (IllegalArgumentException e) {
+            // 데이터가 잘못된 중대 결함인 경우 로깅
+            throw new InvalidLoginUserDataException("데이터가 올바르지 못한 사용자입니다. " + user.getId());
+        }
     }
 
 }
