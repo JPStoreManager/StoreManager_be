@@ -1,4 +1,4 @@
-package manage.store.service.auth.policy.sales;
+package manage.store.config.auth.abac.policy.sales;
 
 import lombok.RequiredArgsConstructor;
 import manage.store.model.user.value.UserAuthCode;
@@ -24,7 +24,7 @@ public class SalesAccessPolicy {
 
     /**
      * 사용자가 가진 권한으로 매출의 통계 정보를 확인할 수 있는지 검증
-     * @return
+     * @return true - 접근가능 | false - 접근불가
      */
     public boolean canAccessStatistics() {
         if(!userAuthService.isUserAuthenticated()) {

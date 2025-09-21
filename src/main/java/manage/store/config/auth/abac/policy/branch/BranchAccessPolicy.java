@@ -1,4 +1,4 @@
-package manage.store.service.auth.policy.branch;
+package manage.store.config.auth.abac.policy.branch;
 
 import lombok.RequiredArgsConstructor;
 import manage.store.model.common.branch.StoreBranch;

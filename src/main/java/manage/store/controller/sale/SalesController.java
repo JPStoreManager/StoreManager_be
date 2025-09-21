@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class SalesController extends BaseController {
@@ -26,7 +28,9 @@ public class SalesController extends BaseController {
 
     @GetMapping(ApiPathUtils.ApiPath.Sales.SALES_MONTH)
     public GetMonthSalesResponse getYearlySales(@ModelAttribute @Valid GetMonthSalesRequest request) {
-        return salesService.getMonthSales(request);
+        List<GetMonthSalesResponse.DailySales> monthSales = salesService.getMonthSales(request);
+
+        return new GetMonthSalesResponse(monthSales);
     }
 
 //    @GetMapping(ApiPathUtils.ApiPath.Sales.SALES_YEAR)

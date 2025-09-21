@@ -3,6 +3,7 @@ package manage.store.service.money;
 import manage.store.consts.Tags;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -47,18 +47,18 @@ public class DailySalesServiceImplTest {
 
         final List<DailySales> sampleSales = getSampleSales(branchCd, year, month).stream()
                 .peek(s -> {
-                    int tmpMoney = Integer.parseInt(s.getRegistDate().substring(8, 10));
+                    int tmpMoney = Integer.parseInt(s.getRegistDate().value().substring(8, 10));
                     s.setCashSales(new Money((long) tmpMoney));
                     s.setCardSales(new Money((long) tmpMoney));
                 })
-                .filter(sales -> sales.getRegistDate().compareTo(String.format("%04d-%02d-%d", year, month, sampleSize)) <= 0)
+                .filter(sales -> sales.getRegistDate().value().compareTo(String.format("%04d-%02d-%d", year, month, sampleSize)) <= 0)
                 .collect(Collectors.toList());
 
         given(salesRepository.selectSalesByMonth(branchCd, year, month)).willReturn(sampleSales);
 
         // When
         final GetMonthSalesRequest request = new GetMonthSalesRequest(branchCd, year, month);
-        final GetMonthSalesResponse response = salesService.getMonthSales(request);
+        final List<GetMonthSalesResponse.DailySales> response = salesService.getMonthSales(request);
 
         // Then
         assertNotNull(response);
@@ -83,10 +83,10 @@ public class DailySalesServiceImplTest {
         };
 
         int day = 1;
-        for (GetMonthSalesResponse.DailySales actual : response.getMonthlySales()) {
+        for (GetMonthSalesResponse.DailySales actual : response) {
             final GetMonthSalesResponse.DailySales expected = new GetMonthSalesResponse.DailySales();
             expected.setBranchCd(branchCd);
-            expected.setRegistDate(String.format("%04d-%02d-%02d", year, month, day));
+            expected.setRegistDate(new RegistDate(year, month, day));
             if(day <= sampleSize) {
                 expected.setCardSales(new Money((long) expectedSales[day - 1][0]));
                 expected.setCashSales(new Money((long) expectedSales[day - 1][1]));
@@ -94,6 +94,8 @@ public class DailySalesServiceImplTest {
                 expected.setCardPercentage(expectedSales[day - 1][3]);
                 expected.setWeeklyTotalSales(new Money((long) expectedSales[day - 1][4]));
                 expected.setMonthTotalSales(new Money((long) expectedSales[day - 1][5]));
+            } else {
+                expected.setMonthTotalSales(new Money((long) expectedSales[expectedSales.length - 1][5]));
             }
             day++;
             // TODO 매입 기능 추가 시 주석 해제
@@ -115,7 +117,7 @@ public class DailySalesServiceImplTest {
 
         // When
         final GetMonthSalesRequest request = new GetMonthSalesRequest(branchCd, year, month);
-        final GetMonthSalesResponse result = salesService.getMonthSales(request);
+        final List<GetMonthSalesResponse.DailySales> result = salesService.getMonthSales(request);
 
         // Then
         assertNotNull(result);
@@ -129,8 +131,8 @@ public class DailySalesServiceImplTest {
         expected.setMonthTotalSales(new Money(0L));
 
         int day = 1;
-        for (GetMonthSalesResponse.DailySales res : result.getMonthlySales()) {
-            expected.setRegistDate(String.format("%04d-%02d-%02d", year, month, day++));
+        for (GetMonthSalesResponse.DailySales res : result) {
+            expected.setRegistDate(new RegistDate(year, month, day++));
             validateSales(expected, res);
         }
 

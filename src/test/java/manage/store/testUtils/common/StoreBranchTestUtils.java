@@ -3,6 +3,7 @@ package manage.store.testUtils.common;
 import manage.store.model.common.branch.StoreBranch;
 import manage.store.model.common.value.SortOrder;
 import manage.store.model.common.value.UseYn;
+import manage.store.model.user.value.UserId;
 
 public interface StoreBranchTestUtils {
 
@@ -13,9 +14,9 @@ public interface StoreBranchTestUtils {
             "address1",
             UseYn.Y,
             new SortOrder(9999L),
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000",
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000"
     );
 
@@ -26,9 +27,9 @@ public interface StoreBranchTestUtils {
             "address2",
             UseYn.Y,
             new SortOrder(9999L),
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000",
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000"
     );
 
@@ -39,9 +40,9 @@ public interface StoreBranchTestUtils {
             "address3",
             UseYn.Y,
             new SortOrder(9999L),
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000",
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000"
     );
 
@@ -52,9 +53,9 @@ public interface StoreBranchTestUtils {
             "address4",
             UseYn.N,
             new SortOrder(9999L),
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000",
-            "system",
+            new UserId("system"),
             "2025-07-13 00:00:00.000"
     );
 

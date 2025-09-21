@@ -16,7 +16,7 @@ public class DummyAuthorizationController {
     public AuthMeResponse checkAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return new AuthMeResponse(SuccessFlag.Y, Message.AUTH_ME_SUCCESS, ((LoginUserDetails) authentication.getPrincipal()).getUserId().value());
+        return new AuthMeResponse(SuccessFlag.Y, Message.AUTH_ME_SUCCESS, ((LoginUserDetails) authentication.getPrincipal()).getUserId());
     }
 
 }

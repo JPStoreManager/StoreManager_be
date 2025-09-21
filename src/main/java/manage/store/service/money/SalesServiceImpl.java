@@ -3,10 +3,12 @@ package manage.store.service.money;
 import lombok.RequiredArgsConstructor;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.model.common.value.RegistDate;
 import manage.store.repository.money.SalesRepository;
 import manage.store.utils.DateUtils;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.money.sales.value.Money;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -24,7 +26,7 @@ public class SalesServiceImpl implements SalesService {
     private final SalesRepository salesRepository;
 
     @Override
-    public GetMonthSalesResponse getMonthSales(GetMonthSalesRequest request) {
+    public List<GetMonthSalesResponse.DailySales> getMonthSales(GetMonthSalesRequest request) {
         final String branchCd = request.getBranchCd();
         final int year = request.getYear();
         final int month = request.getMonth();
@@ -33,53 +35,11 @@ public class SalesServiceImpl implements SalesService {
             throw new IllegalArgumentException("Invalid parameters for getting monthly sales. Branch code: " + branchCd + ", Year: " + year + ", Month: " + month);
         }
 
-        final GetMonthSalesResponse res = getMonthSalesResponseFormat(branchCd, year, month);
-        final GetMonthSalesResponse salesUpdatedRes = setMonthSalesResponse(res, branchCd, year, month);
+        final List<GetMonthSalesResponse.DailySales> monthSales = getDefaultMonthSalesResponse(branchCd, year, month);
+        final List<GetMonthSalesResponse.DailySales> summaryAddedMonthSales = setMonthSalesSummary(monthSales);
 //        final GetMonthSalesResponse salesExpenseUpdatedRes = setMonthSalesExpenseResponse(salesUpdatedRes, branchCd, year, month);
 
-        return salesUpdatedRes;
-//        return salesExpenseUpdatedRes;
-    }
-
-    /**
-     * 월별 매출 응답에 날짜별 매출 데이터를 설정한다.
-     * @param response 월별 매출 응답 객체 (월별 날짜에 대한 매출 형식 데이터만 넣어져 있는 상태)
-     * @param branchCd 지점 코드
-     * @param year 년
-     * @param month 월
-     * @return 날짜별 매출 데이터가 설정된 GetMonthSalesResponse 객체
-     */
-    public GetMonthSalesResponse setMonthSalesResponse(GetMonthSalesResponse response, String branchCd, int year, int month) {
-        final Map<String, DailySales> salesByRegisteredDate = salesRepository.selectSalesByMonth(branchCd, year, month).stream()
-                .collect(Collectors.toMap(
-                        sales -> sales.getRegistDate(),
-                        sales -> sales,
-                        (existing, replacement) -> existing, // 중복된 키가 있을 경우 기존 값을 유지
-                        () -> new HashMap<>()
-                ));
-
-        Money monthlyTotalSales = new Money(0L), weeklyTotalSales = new Money(0L);
-        for (GetMonthSalesResponse.DailySales dailySales : response.getMonthlySales()) {
-            final DailySales salesData = salesByRegisteredDate.get(dailySales.getRegistDate());
-            if(salesData == null) continue;
-
-            final String registeredDate = salesData.getRegistDate();
-            final Money cardSales = salesData.getCardSales(), cashSales = salesData.getCashSales();
-            final Money daySales = new Money(cardSales.value() + cashSales.value());
-
-            monthlyTotalSales = monthlyTotalSales.add(daySales);
-            weeklyTotalSales = getWeeklyTotalSales(registeredDate, weeklyTotalSales, daySales);
-
-            dailySales.setCardSales(salesData.getCardSales());
-            dailySales.setCashSales(salesData.getCashSales());
-            dailySales.setTotalSales(daySales);
-            dailySales.setCardPercentage((int)(cardSales.value() * 100 / daySales.value()));
-            dailySales.setWeeklyTotalSales(weeklyTotalSales);
-            dailySales.setMonthTotalSales(monthlyTotalSales);
-            dailySales.setComment(salesData.getComment());
-        }
-
-        return response;
+        return summaryAddedMonthSales;
     }
 
     /**
@@ -87,27 +47,59 @@ public class SalesServiceImpl implements SalesService {
      * @param branchCd 지점 코드
      * @param year 년
      * @param month 월
-     * @return GetMonthSalesResponse 날짜별 매출 객체가 생성된 GetMonthSalesResponse 객체
+     * @return List<GetMonthSalesResponse.DailySales> 월에 대한 날짜별 매출 객체
      */
-    private GetMonthSalesResponse getMonthSalesResponseFormat(String branchCd, int year, int month) {
-        GetMonthSalesResponse response = new GetMonthSalesResponse();
-
+    private List<GetMonthSalesResponse.DailySales> getDefaultMonthSalesResponse(String branchCd, int year, int month) {
         int lengthOfMonthDays = DateUtils.getDaysCntInMonth(year, month);
         List<GetMonthSalesResponse.DailySales> monthlySales = new ArrayList<>(lengthOfMonthDays);
+        Map<RegistDate, DailySales> salesByRegisteredDate = getSalesByRegisteredDate(branchCd, year, month);
 
         for (int i = 1; i <= lengthOfMonthDays; i++) {
             GetMonthSalesResponse.DailySales dailySales = new GetMonthSalesResponse.DailySales();
-            String date = String.format("%04d-%02d-%02d", year, month, i);
+            RegistDate registDate = new RegistDate(year, month, i);
 
+            // 기본 값 설정
             dailySales.setBranchCd(branchCd);
-            dailySales.setRegistDate(date);
+            dailySales.setRegistDate(registDate);
+
+            // 기본 매출 값 설정
+            DailySales salesData = salesByRegisteredDate.get(registDate);
+            if(salesData != null) {
+                Money totalSales = new Money(salesData.getCardSales().value() + salesData.getCashSales().value());
+                int cardPercentage = (int) (salesData.getCardSales().value() * 100 / totalSales.value());
+
+                dailySales.setCardSales(salesData.getCardSales());
+                dailySales.setCashSales(salesData.getCashSales());
+                dailySales.setTotalSales(totalSales);
+                dailySales.setCardPercentage(cardPercentage);
+                dailySales.setComment(salesData.getComment());
+            }
 
             monthlySales.add(dailySales);
         }
 
-        response.setMonthlySales(monthlySales);
+        return monthlySales;
+    }
 
-        return response;
+    /**
+     * 월별 매출 응답의 날짜별 통계 데이터를 설정
+     * @param monthlySales 월에 대한 날짜별 매출 객체
+     * @return List<GetMonthSalesResponse.DailySales> 통계 데이터가 설정된 월에 대한 날짜별 매출 객체
+     */
+    @PreAuthorize("salesAccessPolicy.canAccessStatistics()")
+    private List<GetMonthSalesResponse.DailySales> setMonthSalesSummary(List<GetMonthSalesResponse.DailySales> monthlySales) {
+        Money monthlyTotalSales = new Money(0L), weeklyTotalSales = new Money(0L);
+        for (GetMonthSalesResponse.DailySales dailySales : monthlySales) {
+            RegistDate registeredDate = dailySales.getRegistDate();
+            Money dailyTotalSales = dailySales.getTotalSales();
+
+            monthlyTotalSales = monthlyTotalSales.add(dailyTotalSales);
+            weeklyTotalSales = getWeeklyTotalSales(registeredDate, weeklyTotalSales, dailyTotalSales);
+
+            dailySales.setWeeklyTotalSales(weeklyTotalSales);
+            dailySales.setMonthTotalSales(monthlyTotalSales);
+        }
+        return monthlySales;
     }
 
     /**
@@ -118,13 +110,23 @@ public class SalesServiceImpl implements SalesService {
      * @param daySales 특정 날짜의 매출
      * @return 주간 총 매출
      */
-    private Money getWeeklyTotalSales(String registeredDate, Money curWeeklyTotalSales, Money daySales) {
-        DayOfWeek dayOfWeek = DateUtils.getDayOfWeek(registeredDate);
+    private Money getWeeklyTotalSales(RegistDate registeredDate, Money curWeeklyTotalSales, Money daySales) {
+        DayOfWeek dayOfWeek = DateUtils.getDayOfWeek(registeredDate.value());
         if(dayOfWeek == DayOfWeek.MONDAY) {
             return daySales;
         } else {
             return curWeeklyTotalSales.add(daySales);
         }
+    }
+
+    private Map<RegistDate, DailySales> getSalesByRegisteredDate(String branchCd, int year, int month) {
+        return salesRepository.selectSalesByMonth(branchCd, year, month).stream()
+                .collect(Collectors.toMap(
+                        DailySales::getRegistDate,
+                        sales -> sales,
+                        (existing, replacement) -> existing, // 중복된 키가 있을 경우 기존 값을 유지
+                        HashMap::new
+                ));
     }
 }
 

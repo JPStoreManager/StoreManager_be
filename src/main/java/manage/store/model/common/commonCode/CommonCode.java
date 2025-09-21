@@ -8,6 +8,7 @@ import manage.store.model.common.value.CommonCodeCd;
 import manage.store.model.common.value.CommonCodeGrpCd;
 import manage.store.model.common.value.SortOrder;
 import manage.store.model.common.value.UseYn;
+import manage.store.model.user.value.UserId;
 
 @Data
 @Builder
@@ -22,9 +23,9 @@ public class CommonCode {
     private String cdDesc;
     private UseYn useYn;
     private SortOrder sortOrder;
-    private String createdBy;
+    private UserId createdBy;
     private String createdDate;
-    private String lastUpdatedBy;
+    private UserId lastUpdatedBy;
     private String lastUpdatedDate;
 
 }

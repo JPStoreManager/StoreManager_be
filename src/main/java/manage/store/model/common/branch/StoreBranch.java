@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import manage.store.model.common.value.SortOrder;
 import manage.store.model.common.value.UseYn;
+import manage.store.model.user.value.UserId;
 
 @Data
 @AllArgsConstructor
@@ -17,9 +18,9 @@ public class StoreBranch {
     private String address;
     private UseYn useYn;
     private SortOrder sortOrder;
-    private String createdBy;
+    private UserId createdBy;
     private String createdDate;
-    private String lastUpdatedBy;
+    private UserId lastUpdatedBy;
     private String lastUpdatedDate;
 
     @Override

@@ -26,7 +26,7 @@ public class DateUtils {
 
     /**
      * 주어진 날짜 문자열에 해당하는 요일을 반환합니다.
-     * @param date 날짜 문자열 (예: "2023-10-01")
+     * @param date 날짜 문자열 yyyy-MM-dd (예: "2023-10-01")
      * @return DayOfWeek 해당 날짜의 요일 enum
      */
     public static DayOfWeek getDayOfWeek(String date) {

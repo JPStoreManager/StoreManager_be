@@ -6,6 +6,7 @@ import manage.store.model.common.value.CommonCodeCd;
 import manage.store.model.common.value.CommonCodeGrpCd;
 import manage.store.model.common.value.SortOrder;
 import manage.store.model.common.value.UseYn;
+import manage.store.model.user.value.UserId;
 
 public interface CommonCodeTestUtils {
 
@@ -19,9 +20,9 @@ public interface CommonCodeTestUtils {
             .cdDesc("code value desc")
             .useYn(UseYn.Y)
             .sortOrder(new SortOrder(1L))
-            .createdBy("system")
+            .createdBy(new UserId("system"))
             .createdDate("2025-07-26 00:00:00.000")
-            .lastUpdatedBy("system")
+            .lastUpdatedBy(new UserId("system"))
             .lastUpdatedDate("2025-07-26 00:00:00.000")
             .build();
 
@@ -33,9 +34,9 @@ public interface CommonCodeTestUtils {
             .cdDesc("code value desc")
             .useYn(UseYn.Y)
             .sortOrder(new SortOrder(2L))
-            .createdBy("system")
+            .createdBy(new UserId("system"))
             .createdDate("2025-07-26 00:00:00.000")
-            .lastUpdatedBy("system")
+            .lastUpdatedBy(new UserId("system"))
             .lastUpdatedDate("2025-07-26 00:00:00.000")
             .build();
 
@@ -47,9 +48,9 @@ public interface CommonCodeTestUtils {
             .cdDesc("code value desc")
             .useYn(UseYn.Y)
             .sortOrder(new SortOrder(3L))
-            .createdBy("system")
+            .createdBy(new UserId("system"))
             .createdDate("2025-07-26 00:00:00.000")
-            .lastUpdatedBy("system")
+            .lastUpdatedBy(new UserId("system"))
             .lastUpdatedDate("2025-07-26 00:00:00.000")
             .build();
 
@@ -61,9 +62,9 @@ public interface CommonCodeTestUtils {
             .cdDesc("code value desc")
             .useYn(UseYn.N)
             .sortOrder(new SortOrder(4L))
-            .createdBy("system")
+            .createdBy(new UserId("system"))
             .createdDate("2025-07-26 00:00:00.000")
-            .lastUpdatedBy("system")
+            .lastUpdatedBy(new UserId("system"))
             .lastUpdatedDate("2025-07-26 00:00:00.000")
             .build();
 
@@ -75,9 +76,9 @@ public interface CommonCodeTestUtils {
             .cdDesc("code value desc")
             .useYn(UseYn.N)
             .sortOrder(new SortOrder(5L))
-            .createdBy("system")
+            .createdBy(new UserId("system"))
             .createdDate("2025-07-26 00:00:00.000")
-            .lastUpdatedBy("system")
+            .lastUpdatedBy(new UserId("system"))
             .lastUpdatedDate("2025-07-26 00:00:00.000")
             .build();
 

@@ -3,6 +3,7 @@ package manage.store.model.money.sales.DailySales;
 
 import lombok.Data;
 import manage.store.model.common.value.DbUpdateDate;
+import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
 
@@ -11,7 +12,7 @@ import java.text.SimpleDateFormat;
 public class DailySales {
 
     private String branchCd;
-    private String registDate;
+    private RegistDate registDate;
     private Money cardSales;
     private Money cashSales;
     private String comment;
@@ -25,8 +26,8 @@ public class DailySales {
         return branchCd != null && !branchCd.isBlank();
     }
 
-    private boolean isRegistDateValid(String registDate) {
-        return registDate != null && isDateFormatValid(registDate);
+    private boolean isRegistDateValid(RegistDate registDate) {
+        return registDate != null;
     }
 
     private boolean isCardSalesValid(Money cardSales) {

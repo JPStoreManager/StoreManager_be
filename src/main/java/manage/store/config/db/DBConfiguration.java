@@ -122,6 +122,7 @@ public class DBConfiguration {
         typeHandlerRegistry.register(DbUpdateDateTypeHandler.class);
         typeHandlerRegistry.register(SortOrderTypeHandler.class);
         typeHandlerRegistry.register(DeleteFlagTypeHandler.class);
+        typeHandlerRegistry.register(RegistDateTypeHandler.class);
 
         // sales
         typeHandlerRegistry.register(MoneyTypeHandler.class);

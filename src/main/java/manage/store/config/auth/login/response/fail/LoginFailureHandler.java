@@ -1,4 +1,4 @@
-package manage.store.config.auth.response.fail;
+package manage.store.config.auth.login.response.fail;
 
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;

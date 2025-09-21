@@ -1,7 +1,7 @@
-package manage.store.config.auth;
+package manage.store.config.auth.login;
 
 import lombok.RequiredArgsConstructor;
-import manage.store.config.auth.user.LoginUserDetailsServiceImpl;
+import manage.store.config.auth.login.user.LoginUserDetailsServiceImpl;
 import manage.store.dto.common.BaseResponse;
 import manage.store.dto.user.login.LoginRequest;
 import manage.store.service.user.login.LoginService;

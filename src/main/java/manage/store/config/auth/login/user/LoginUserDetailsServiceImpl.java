@@ -1,4 +1,4 @@
-package manage.store.config.auth.user;
+package manage.store.config.auth.login.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
