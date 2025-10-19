@@ -1,6 +1,7 @@
 package manage.store.model.user.value;
 
 import manage.store.exception.common.InvalidParameterException;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public class UserId {
 
@@ -15,6 +16,7 @@ public class UserId {
         this.id = userId;
     }
 
+    @JsonValue
     public String value() {
         return id;
     }
