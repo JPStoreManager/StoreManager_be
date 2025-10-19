@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import manage.store.config.WebConfiguration;
-import manage.store.dto.user.login.LoginResponse;
-import manage.store.model.common.value.SuccessFlag;
+import manage.store.consts.Message;
+import manage.store.dto.common.ApiResponse;
 import manage.store.utils.GsonUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
@@ -26,11 +26,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Object credentials = authentication.getCredentials();
 
         Gson gson = GsonUtils.getGson();
-        LoginResponse loginRes = new LoginResponse(SuccessFlag.Y);
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(WebConfiguration.RESPONSE_CONTENT_TYPE);
-        response.getWriter().write(gson.toJson(loginRes));
+        response.getWriter().write(gson.toJson(ApiResponse.success(Message.LOGIN_SUCCESS)));
 
         clearAuthenticationAttributes(request);
     }

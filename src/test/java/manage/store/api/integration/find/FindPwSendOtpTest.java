@@ -3,6 +3,7 @@ package manage.store.api.integration.find;
 import com.google.gson.Gson;
 import manage.store.StoreManagerApplication;
 import manage.store.dto.user.find.FindPwSendOtpRequest;
+import manage.store.dto.user.find.FindPwSendOtpResponse;
 import manage.store.repository.user.account.UserAccountRepository;
 import manage.store.utils.ApiPathUtils;
 import manage.store.model.common.value.SuccessFlag;
@@ -171,7 +172,8 @@ public class FindPwSendOtpTest extends BaseIntegration {
                 responseFields(
                         fieldWithPath("result").description("계정 확인 및 otp 전송 성공 여부").type(String.class),
                         fieldWithPath("msg").description("otp 전송 성공/실패 메세지").type(String.class),
-                        fieldWithPath("sessionId").description("otp 전송에 성공하여 다음 단계가 진행될 때 인증에 사용할 토큰이 저장될 key").type(String.class).optional(),
+                        fieldWithPath("data").description("응답 데이터").type(FindPwSendOtpResponse.class).optional(),
+                        fieldWithPath("data.sessionId").description("비밀번호 찾기에 활용되는 세션 아이디").type(String.class),
                         fieldWithPath("timestamp").description("api 응답 반환 시간")
                 )));
     }

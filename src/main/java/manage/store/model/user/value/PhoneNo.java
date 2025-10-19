@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 public class PhoneNo {
 
     private static final int LENGTH = 11;
@@ -8,7 +10,7 @@ public class PhoneNo {
 
     public PhoneNo(String phoneNo) {
         if (phoneNo == null || phoneNo.length() != LENGTH) {
-            throw new IllegalArgumentException("Phone number is null, empty, or exceeds maximum length of 15 characters.");
+            throw new InvalidParameterException("Phone number is null, empty, or exceeds maximum length of 15 characters.");
         }
         this.phoneNo = phoneNo;
     }

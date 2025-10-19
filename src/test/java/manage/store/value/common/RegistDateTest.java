@@ -2,6 +2,7 @@ package manage.store.value.common;
 
 import manage.store.consts.Const;
 import manage.store.consts.Tags;
+import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.RegistDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -55,7 +56,7 @@ public class RegistDateTest {
                 null
         };
         for (String invalidDate : invalidDates) {
-            Assertions.assertThrows(IllegalArgumentException.class, () -> {new RegistDate(invalidDate);});
+            Assertions.assertThrows(InvalidParameterException.class, () -> {new RegistDate(invalidDate);});
         }
     }
 }

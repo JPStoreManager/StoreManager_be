@@ -1,5 +1,7 @@
 package manage.store.model.common.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 import java.time.LocalDateTime;
 
 public class DbUpdateDate {
@@ -8,7 +10,7 @@ public class DbUpdateDate {
 
     public DbUpdateDate(LocalDateTime dateTime) {
         if(dateTime == null) {
-            throw new IllegalArgumentException("Date cannot be null.");
+            throw new InvalidParameterException("Date cannot be null.");
         }
 
         this.dateTime = dateTime;

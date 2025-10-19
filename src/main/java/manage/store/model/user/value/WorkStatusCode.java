@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 public class WorkStatusCode {
 
     private static final int MAX_LENGTH = 20;
@@ -8,7 +10,7 @@ public class WorkStatusCode {
 
     public WorkStatusCode(String code) {
         if (code == null || code.isEmpty() || code.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("Work status code cannot be null or empty and must not exceed " + MAX_LENGTH + " characters.");
+            throw new InvalidParameterException("Work status code cannot be null or empty and must not exceed " + MAX_LENGTH + " characters.");
         }
 
         this.code = code;

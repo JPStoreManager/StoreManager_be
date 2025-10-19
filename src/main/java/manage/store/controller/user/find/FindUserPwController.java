@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import manage.store.controller.BaseController;
 import manage.store.consts.Message;
-import manage.store.dto.common.BaseResponse;
+import manage.store.dto.common.ApiResponse;
+import manage.store.dto.common.BaseResult;
 import manage.store.dto.user.find.*;
-import manage.store.model.common.value.SuccessFlag;
 import manage.store.service.user.find.FindUserPwService;
 import manage.store.service.user.session.FindUserPwSessionService;
 import manage.store.utils.ApiPathUtils;
@@ -36,17 +36,17 @@ public class FindUserPwController extends BaseController {
      * @throws InvalidParameterException 사용자가 입력한 id와 email이 존재하지 않거나 유효하지 않을 경우
      */
     @PostMapping(ApiPathUtils.ApiPath.User.FindPassword.SEND_OTP)
-    public ResponseEntity<FindPwSendOtpResponse> sendOtp(@RequestBody @Valid FindPwSendOtpRequest request) {
-        BaseResponse result = findUserPwService.sendOtp(request);
+    public ResponseEntity<ApiResponse<FindPwSendOtpResponse>> sendOtp(@RequestBody @Valid FindPwSendOtpRequest request) {
+        BaseResult result = findUserPwService.sendOtp(request);
 
-        if(result.getResult().isSuccess()) {
+        if(result.isSuccess()) {
             String sessionKey = findUserPwSessionService.createSessionKey();
             findUserPwSessionService.updateSession(sessionKey, request, FindUserPwSession.Step.SEND_OTP);
 
-            return ResponseEntity.ok(new FindPwSendOtpResponse(result.getResult(), result.getMsg(), sessionKey));
+            return ResponseEntity.ok(ApiResponse.success(FindPwSendOtpResponse.success(sessionKey), Message.FIND_PW_SEND_OTP_SUCCESS));
         }
 
-        return ResponseEntity.ok(new FindPwSendOtpResponse(result.getResult(), result.getMsg()));
+        return ResponseEntity.ok(ApiResponse.fail(Message.FIND_PW_SEND_OTP_FAIL_FAIL_TO_SEND_OTP));
     }
 
     /**
@@ -61,25 +61,25 @@ public class FindUserPwController extends BaseController {
      * msg{@code String} - 성공 / 실패에 대한 메세지 <br>
      */
     @PostMapping(ApiPathUtils.ApiPath.User.FindPassword.VALIDATE_OTP)
-    public ResponseEntity<FindPwValidateOtpResponse> validateOtp(@RequestHeader(value = FIND_PW_HEADER_ID) String sessionId,
-                                                                 @RequestBody @Valid FindPwValidateOtpRequest request) {
+    public ResponseEntity<ApiResponse<FindPwValidateOtpResponse>> validateOtp(@RequestHeader(value = FIND_PW_HEADER_ID) String sessionId,
+                                      @RequestBody @Valid FindPwValidateOtpRequest request) {
         // 1. otp 전송 단계를 거쳤는지 session을 통해 검증
         FindUserPwSession session = findUserPwSessionService.getSession(sessionId);
         if(!findUserPwService.isValidStep(session, FindUserPwSession.Step.VALIDATE_OTP)) {
-            return ResponseEntity.badRequest().body(new FindPwValidateOtpResponse(SuccessFlag.N, Message.FIND_PW_VALIDATE_OTP_FAIL_NOT_VALID));
+            return ResponseEntity.badRequest().body(ApiResponse.fail(Message.FIND_PW_FAIL_INVALID_PARAM_OR_ACCESS));
         }
 
         // 2. otp 검증
-        BaseResponse result = findUserPwService.validateOtp(request);
-        if(result.getResult().isSuccess()) {
+        BaseResult result = findUserPwService.validateOtp(request);
+        if(result.isSuccess()) {
             // 3. otp 검증 성공 시 session 업데이트
             findUserPwSessionService.updateSession(sessionId, request, FindUserPwSession.Step.VALIDATE_OTP);
 
-            return ResponseEntity.ok(new FindPwValidateOtpResponse(result.getResult(), result.getMsg(), sessionId));
+            return ResponseEntity.ok(ApiResponse.success(FindPwValidateOtpResponse.success(sessionId), Message.FIND_PW_VALIDATE_OTP_SUCCESS));
         }
 
         // 실패 응답 반환
-        return ResponseEntity.ok(new FindPwValidateOtpResponse(result.getResult(), result.getMsg()));
+        return ResponseEntity.ok(ApiResponse.fail(Message.FIND_PW_VALIDATE_OTP_FAIL_NOT_VALID));
     }
 
     /**
@@ -92,23 +92,24 @@ public class FindUserPwController extends BaseController {
      *         msg {@code String} - 성공 / 실패에 대한 메세지
      */
     @PutMapping(ApiPathUtils.ApiPath.User.FindPassword.UPDATE_PW)
-    public ResponseEntity<FindPwUpdatePwResponse> updatePassword(@RequestHeader(value = FIND_PW_HEADER_ID) String sessionId,
+    public ResponseEntity<ApiResponse> updatePassword(@RequestHeader(value = FIND_PW_HEADER_ID) String sessionId,
                                                                  @RequestBody @Valid FindPwUpdatePwRequest request) {
         // 1. otp 검증 단계를 거쳤는지 session을 통해 검증
         FindUserPwSession session = findUserPwSessionService.getSession(sessionId);
         if(!findUserPwService.isValidStep(session, FindUserPwSession.Step.NEW_PW)) {
-            return ResponseEntity.badRequest().body(new FindPwUpdatePwResponse(SuccessFlag.N, Message.FIND_PW_FAIL_INVALID_PARAM_OR_ACCESS));
+            return ResponseEntity.badRequest().body(ApiResponse.fail(Message.FIND_PW_FAIL_INVALID_PARAM_OR_ACCESS));
         }
 
         // 2. 비밀번호 업데이트
-        BaseResponse result = findUserPwService.updatePassword(request);
-        if(result.getResult().isSuccess()) {
+        BaseResult result = findUserPwService.updatePassword(request);
+        if(result.isSuccess()) {
             // 3. 세션 비활성화
             findUserPwSessionService.removeSession(sessionId);
+            return ResponseEntity.ok(ApiResponse.success(Message.FIND_PW_UPDATE_PW_SUCCESS));
         }
 
         // 4. 실패 응답 반환
-        return ResponseEntity.ok(new FindPwUpdatePwResponse(result.getResult(), result.getMsg()));
+        return ResponseEntity.ok(ApiResponse.fail(Message.FIND_PW_UPDATE_PW_FAIL_INVALID_PW));
     }
 
 }

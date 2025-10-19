@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 public class UserName {
 
     private static final int MIN_LENGTH = 2;
@@ -9,7 +11,7 @@ public class UserName {
 
     public UserName(String name) {
         if (name == null || name.length() < MIN_LENGTH || name.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("User name must be between " + MIN_LENGTH + " and " + MAX_LENGTH + " characters long.");
+            throw new InvalidParameterException("User name must be between " + MIN_LENGTH + " and " + MAX_LENGTH + " characters long.");
         }
         this.name = name;
     }

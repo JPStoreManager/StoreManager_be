@@ -3,7 +3,7 @@ package manage.store.api.controller;
 import com.google.gson.Gson;
 import manage.store.StoreManagerApplication;
 import manage.store.controller.user.find.FindUserPwController;
-import manage.store.dto.common.BaseResponse;
+import manage.store.dto.common.BaseResult;
 import manage.store.dto.user.find.FindPwSendOtpRequest;
 import manage.store.dto.user.find.FindPwUpdatePwRequest;
 import manage.store.dto.user.find.FindPwValidateOtpRequest;
@@ -77,8 +77,7 @@ class FindUserPwControllerTest {
         request.setEmail(user.getEmail().value());
         final String SESSION_ID = "sessionKey";
 
-        given(findUserPwService.sendOtp(any()))
-                .willReturn(new BaseResponse(SuccessFlag.Y, Message.FIND_PW_SEND_OTP_SUCCESS));
+        given(findUserPwService.sendOtp(any())).willReturn(BaseResult.success(Message.FIND_PW_SEND_OTP_SUCCESS));
 
         given(findUserPwSessionService.createSessionKey()).willReturn(SESSION_ID);
 
@@ -92,7 +91,7 @@ class FindUserPwControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(SuccessFlag.Y.getValue()))
                 .andExpect(jsonPath("$.msg").value(Message.FIND_PW_SEND_OTP_SUCCESS))
-                .andExpect(jsonPath("$.sessionId").value(SESSION_ID));
+                .andExpect(jsonPath("$.data.sessionId").value(SESSION_ID));
     }
 
     @Test
@@ -161,8 +160,7 @@ class FindUserPwControllerTest {
         request.setUserId(user.getId().value());
         request.setEmail(user.getEmail().value());
 
-        given(findUserPwService.sendOtp(any()))
-                .willReturn(new BaseResponse(SuccessFlag.N, Message.FIND_PW_SEND_OTP_FAIL_FAIL_TO_SEND_OTP));
+        given(findUserPwService.sendOtp(any())).willReturn(BaseResult.fail(Message.FIND_PW_SEND_OTP_FAIL_FAIL_TO_SEND_OTP));
 
         // When - Then
         Gson gson = GsonUtils.getGson();
@@ -193,8 +191,7 @@ class FindUserPwControllerTest {
         FindUserPwSession session = new FindUserPwSession(FindUserPwSession.Step.SEND_OTP, new UserId(request.getUserId()), new Email(request.getEmail()));
         given(findUserPwSessionService.getSession(SESSION_ID)).willReturn(session);
         given(findUserPwService.isValidStep(session, FindUserPwSession.Step.VALIDATE_OTP)).willReturn(true);
-        given(findUserPwService.validateOtp(any()))
-                .willReturn(new BaseResponse(SuccessFlag.Y, Message.FIND_PW_VALIDATE_OTP_SUCCESS));
+        given(findUserPwService.validateOtp(any())).willReturn(BaseResult.success(Message.FIND_PW_VALIDATE_OTP_SUCCESS));
 
 
         doNothing().when(findUserPwSessionService).updateSession(SESSION_ID, request, FindUserPwSession.Step.VALIDATE_OTP);
@@ -208,7 +205,7 @@ class FindUserPwControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(SuccessFlag.Y.getValue()))
                 .andExpect(jsonPath("$.msg").value(Message.FIND_PW_VALIDATE_OTP_SUCCESS))
-                .andExpect(jsonPath("$.sessionId").value(SESSION_ID));
+                .andExpect(jsonPath("$.data.sessionId").value(SESSION_ID));
     }
 
     @Test
@@ -369,7 +366,7 @@ class FindUserPwControllerTest {
         given(findUserPwSessionService.getSession(SESSION_ID))
                 .willReturn(session);
         given(findUserPwService.isValidStep(session, FindUserPwSession.Step.VALIDATE_OTP)).willReturn(true);
-        given(findUserPwService.validateOtp(any())).willReturn(new BaseResponse(SuccessFlag.N, Message.FIND_PW_VALIDATE_OTP_FAIL_NOT_VALID));
+        given(findUserPwService.validateOtp(any())).willReturn(BaseResult.fail(Message.FIND_PW_VALIDATE_OTP_FAIL_NOT_VALID));
 
         // When - Then
         mock.perform(post(VALIDATE_OTP_PATH)
@@ -399,7 +396,7 @@ class FindUserPwControllerTest {
         FindUserPwSession session = new FindUserPwSession(FindUserPwSession.Step.VALIDATE_OTP, new UserId(request.getUserId()), new Email(request.getEmail()));
         given(findUserPwSessionService.getSession(sessionId)).willReturn(session);
         given(findUserPwService.isValidStep(session, FindUserPwSession.Step.NEW_PW)).willReturn(true);
-        given(findUserPwService.updatePassword(any())).willReturn(new BaseResponse(SuccessFlag.Y, Message.FIND_PW_UPDATE_PW_SUCCESS));
+        given(findUserPwService.updatePassword(any())).willReturn(BaseResult.success(Message.FIND_PW_UPDATE_PW_SUCCESS));
         doNothing().when(findUserPwSessionService).removeSession(sessionId);
 
         // When - Then
@@ -515,7 +512,7 @@ class FindUserPwControllerTest {
         FindUserPwSession session = new FindUserPwSession(FindUserPwSession.Step.VALIDATE_OTP, new UserId(request.getUserId()), new Email(request.getEmail()));
         given(findUserPwSessionService.getSession(sessionId)).willReturn(session);
         given(findUserPwService.isValidStep(session, FindUserPwSession.Step.NEW_PW)).willReturn(true);
-        given(findUserPwService.updatePassword(any())).willReturn(new BaseResponse(SuccessFlag.N, Message.FIND_PW_UPDATE_PW_FAIL_INVALID_PW));
+        given(findUserPwService.updatePassword(any())).willReturn(BaseResult.fail(Message.FIND_PW_UPDATE_PW_FAIL_INVALID_PW));
 
         // When - Then
         Gson gson = GsonUtils.getGson();

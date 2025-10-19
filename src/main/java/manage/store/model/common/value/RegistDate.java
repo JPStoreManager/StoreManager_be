@@ -1,6 +1,7 @@
 package manage.store.model.common.value;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import manage.store.exception.common.InvalidParameterException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,7 +13,7 @@ public class RegistDate {
 
     public RegistDate(String value) {
         if (!isValidRegistDate(value))
-            throw new IllegalArgumentException("Registration date must be in the format YYYY-MM-DD. Provided: " + value);
+            throw new InvalidParameterException("Registration date must be in the format YYYY-MM-DD. Provided: " + value);
 
         this.value = value;
     }
@@ -20,7 +21,7 @@ public class RegistDate {
     public RegistDate(int year, int month, int day) {
         String formattedRegistDateStr = String.format("%04d-%02d-%02d", year, month, day);
         if(!isValidRegistDate(formattedRegistDateStr))
-            throw new IllegalArgumentException("Registration date must be in the format YYYY-MM-DD. Provided: " + formattedRegistDateStr);
+            throw new InvalidParameterException("Registration date must be in the format YYYY-MM-DD. Provided: " + formattedRegistDateStr);
 
         this.value = formattedRegistDateStr;
     }

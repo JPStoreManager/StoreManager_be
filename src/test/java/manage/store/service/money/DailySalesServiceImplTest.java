@@ -3,6 +3,7 @@ package manage.store.service.money;
 import manage.store.consts.Tags;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.DailySales.DailySales;
 import manage.store.model.money.sales.value.Money;
@@ -142,19 +143,19 @@ public class DailySalesServiceImplTest {
     @DisplayName("getMonthSales 실패_invalidParameters")
     public void getMonthSalesTest_fail_invalidParameters() {
         final GetMonthSalesRequest invalidReq1 = new GetMonthSalesRequest(null, 2023, 10);
-        assertThrows(IllegalArgumentException.class, () -> salesService.getMonthSales(invalidReq1));
+        assertThrows(InvalidParameterException.class, () -> salesService.getMonthSales(invalidReq1));
 
         final GetMonthSalesRequest invalidReq2 = new GetMonthSalesRequest("", 2023, 13);
-        assertThrows(IllegalArgumentException.class, () -> salesService.getMonthSales(invalidReq2));
+        assertThrows(InvalidParameterException.class, () -> salesService.getMonthSales(invalidReq2));
 
         final GetMonthSalesRequest invalidReq3 = new GetMonthSalesRequest("branch1", 0, 1);
-        assertThrows(IllegalArgumentException.class, () -> salesService.getMonthSales(invalidReq3));
+        assertThrows(InvalidParameterException.class, () -> salesService.getMonthSales(invalidReq3));
 
         final GetMonthSalesRequest invalidReq4 = new GetMonthSalesRequest("branch1", 2023, 0);
-        assertThrows(IllegalArgumentException.class, () -> salesService.getMonthSales(invalidReq4));
+        assertThrows(InvalidParameterException.class, () -> salesService.getMonthSales(invalidReq4));
 
         final GetMonthSalesRequest invalidReq5 = new GetMonthSalesRequest("branch1", 2023, 13);
-        assertThrows(IllegalArgumentException.class, () -> salesService.getMonthSales(invalidReq5));
+        assertThrows(InvalidParameterException.class, () -> salesService.getMonthSales(invalidReq5));
     }
 
     private List<DailySales> getSampleSales(String branchCd, int year, int month) {

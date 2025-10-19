@@ -2,6 +2,7 @@ package manage.store.service.user.auth.model;
 
 import lombok.Getter;
 import lombok.ToString;
+import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.branch.StoreBranch;
 import manage.store.model.user.value.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,11 +25,11 @@ public class LoginUserDetails implements UserDetails{
 
     public LoginUserDetails(UserId userId, String password, UserName name, UserAuthCode authCode, List<StoreBranch> accessibleBranches) {
         if (userId == null || !StringUtils.hasText(password) || name == null || authCode == null || accessibleBranches == null) {
-            throw new IllegalArgumentException("UserId, UserName, and UserAuthCode, AccessibleBranches must not be null");
+            throw new InvalidParameterException("UserId, UserName, and UserAuthCode, AccessibleBranches must not be null");
         }
 
         if(!authCode.equals(UserAuthCode.ROLE_ADMIN) && accessibleBranches.isEmpty()) {
-            throw new IllegalArgumentException("Accessible branches must not be empty for non-admin users");
+            throw new InvalidParameterException("Accessible branches must not be empty for non-admin users");
         }
 
         this.userId = userId;

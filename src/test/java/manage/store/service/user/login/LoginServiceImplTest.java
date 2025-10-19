@@ -4,8 +4,8 @@ package manage.store.service.user.login;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import manage.store.consts.Tags;
+import manage.store.dto.common.BaseResult;
 import manage.store.dto.user.login.LoginRequest;
-import manage.store.dto.user.login.LoginResponse;
 import manage.store.model.common.value.SuccessFlag;
 import manage.store.model.user.user.User;
 import manage.store.model.user.value.UserId;
@@ -71,7 +71,7 @@ class LoginServiceImplTest {
                     .thenReturn(true);
 
             // When
-            LoginResponse response = loginService.login(request);
+            BaseResult response = loginService.login(request);
 
             // Then
             assertThat(response.getResult()).isEqualTo(SuccessFlag.Y);
@@ -87,7 +87,7 @@ class LoginServiceImplTest {
         given(userAccountRepository.selectUserById(request.getId())).willReturn(null);
 
         // When
-        LoginResponse response = loginService.login(request);
+        BaseResult response = loginService.login(request);
 
         // Then
         assertThat(response.getResult()).isEqualTo(SuccessFlag.N);
@@ -105,7 +105,7 @@ class LoginServiceImplTest {
         given(userAuthService.isUserActivated(user)).willReturn(false);
 
         // When
-        LoginResponse response = loginService.login(request);
+        BaseResult response = loginService.login(request);
 
         // Then
         assertThat(response.getResult()).isEqualTo(SuccessFlag.N);
@@ -126,7 +126,7 @@ class LoginServiceImplTest {
                     .thenReturn(false);
 
             // When
-            LoginResponse response = loginService.login(request);
+            BaseResult response = loginService.login(request);
 
             // Then
             assertThat(response.getResult()).isEqualTo(SuccessFlag.N);

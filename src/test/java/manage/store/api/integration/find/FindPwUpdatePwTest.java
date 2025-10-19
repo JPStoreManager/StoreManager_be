@@ -2,6 +2,7 @@ package manage.store.api.integration.find;
 
 import com.google.gson.Gson;
 import manage.store.StoreManagerApplication;
+import manage.store.dto.common.ApiResponse;
 import manage.store.dto.user.find.FindPwSendOtpRequest;
 import manage.store.dto.user.find.FindPwSendOtpResponse;
 import manage.store.dto.user.find.FindPwUpdatePwRequest;
@@ -29,6 +30,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.shaded.com.google.common.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -92,13 +96,14 @@ public class FindPwUpdatePwTest extends BaseIntegration {
                         .content(gson.toJson(sendOtpRequest)))
                 .andReturn();
 
-        FindPwSendOtpResponse sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), FindPwSendOtpResponse.class);
+        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
 
         // 2) validateOtp
         // Skip 가능
 
         // 3) updatePassword
-        final String sendOtpSessionId = sendOtpResponse.getSessionId();
+        final String sendOtpSessionId = sendOtpResponse.getData().getSessionId();
 
         final FindPwUpdatePwRequest updatePwRequest = new FindPwUpdatePwRequest();
         updatePwRequest.setUserId(user.getId().value());
@@ -139,8 +144,9 @@ public class FindPwUpdatePwTest extends BaseIntegration {
                         .content(gson.toJson(sendOtpRequest)))
                 .andReturn();
 
-        FindPwSendOtpResponse sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), FindPwSendOtpResponse.class);
-        String sendOtpSessionId = sendOtpResponse.getSessionId();
+        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
+        final String sendOtpSessionId = sendOtpResponse.getData().getSessionId();
 
         final String[][] params = {
                 {null, null, null},
@@ -214,8 +220,9 @@ public class FindPwUpdatePwTest extends BaseIntegration {
                 .andReturn();
 
         // 2) updatePw
-        FindPwSendOtpResponse sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), FindPwSendOtpResponse.class);
-        final String sendOtpSessionId = sendOtpResponse.getSessionId();
+        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
+        final String sendOtpSessionId = sendOtpResponse.getData().getSessionId();
 
         final FindPwUpdatePwRequest request = new FindPwUpdatePwRequest();
         request.setUserId(user.getId().value());

@@ -1,25 +1,16 @@
 package manage.store.dto.money.month;
 
 import lombok.*;
-import manage.store.dto.common.BaseResponse;
 import manage.store.model.common.value.RegistDate;
-import manage.store.model.common.value.SuccessFlag;
 import manage.store.model.money.sales.value.Money;
 
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
-public class GetMonthSalesResponse extends BaseResponse {
+@Data
+@AllArgsConstructor
+public class GetMonthSalesResponse{
 
     private List<DailySales> dailySales;
-
-    public GetMonthSalesResponse(SuccessFlag successFlag, String msg, List<DailySales> dailySales) {
-        super(successFlag, msg);
-
-        this.dailySales = dailySales;
-    }
 
     @Getter
     @Setter

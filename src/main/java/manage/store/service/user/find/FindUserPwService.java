@@ -1,6 +1,6 @@
 package manage.store.service.user.find;
 
-import manage.store.dto.common.BaseResponse;
+import manage.store.dto.common.BaseResult;
 import manage.store.dto.user.find.FindPwSendOtpRequest;
 import manage.store.dto.user.find.FindPwUpdatePwRequest;
 import manage.store.dto.user.find.FindPwValidateOtpRequest;
@@ -12,15 +12,14 @@ public interface FindUserPwService {
     /** 비밀번호 찾기 */
     /**
      * 비밀번호 찾기 Step1 (Start) <br>
-     * 사용자가 입력한 id와 email을 통해 계정의 존재를 조사하고 <br>
-     * 계정이 존재한다면 OTP 전송. 실패 시 오류 메세지 반환
+     * 사용자가 입력한 id와 email을 통해 계정의 존재를 조사하고 계정이 존재한다면 OTP 전송. 실패 시 오류 메세지 반환
      * @param request userId {@code String, mandatory} 사용자 아이디 <br>
      *                userEmail {@code String, mandatory} 사용자 이메일
      * @return result {@code SuccessFlag} - 계정 인증 성공 시 Y, 계정 인증 실패 / 메일 전송 실패 시 N <br>
      * msg {@code String} - 성공 / 실패에 대한 메세지
      * @throws InvalidParameterException 사용자가 입력한 id와 email이 존재하지 않거나 유효하지 않을 경우
      */
-    BaseResponse sendOtp(FindPwSendOtpRequest request);
+    BaseResult sendOtp(FindPwSendOtpRequest request);
 
     /**
      * 비밀번호 찾기 Step2 <br>
@@ -30,9 +29,9 @@ public interface FindUserPwService {
      *                enteredOtp {@code String, mandatory} 사용자가 입력한 OTP 번호
      * @return result {@code SuccessFlag} - OTP 검증 성공 시 Y, 실패 시 N <br>
      * msg {@code String} - 성공 / 실패에 대한 메세지
-     * @throws InvalidParameterException 사용자가 입력한 id와 email이 존재하지 않거나 유효하지 않을 경우
+     * @throws InvalidParameterException 사용자가 입력한 id와 email이 존재하지 않거나 유효하지 않을 경우 / enteredOtp가 유효하지 않을 경우
      */
-    BaseResponse validateOtp(FindPwValidateOtpRequest request);
+    BaseResult validateOtp(FindPwValidateOtpRequest request);
 
     /**
      * 비밀번호 찾기 Step3 (End) <br>
@@ -47,7 +46,7 @@ public interface FindUserPwService {
      *                                   - 사용자가 입력한 id와 email이 존재하지 않거나 유효하지 않을 경우 <br>
      *                                   - 사용자가 입력한 신규 비밀번호가 유효하지 않을 경우
      */
-    BaseResponse updatePassword(FindPwUpdatePwRequest request);
+    BaseResult updatePassword(FindPwUpdatePwRequest request);
 
     /**
      * 수행하려는 비밀번호 찾기 step을 할 수 있는 session인지 확인

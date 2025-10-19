@@ -1,12 +1,14 @@
 package manage.store.model.common.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 public class SortOrder {
 
     private Long order;
 
     public SortOrder(Long sortOrder) {
         if (!isValidSortOrder(sortOrder))
-            throw new IllegalArgumentException("Sort order must be a non-negative integer. Provided: " + sortOrder);
+            throw new InvalidParameterException("Sort order must be a non-negative integer. Provided: " + sortOrder);
 
         this.order = sortOrder;
     }

@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 public class UserId {
 
     private static final int MAX_USER_ID_LENGTH = 100;
@@ -8,7 +10,7 @@ public class UserId {
 
     public UserId(String userId) {
         if(userId == null || userId.length() > MAX_USER_ID_LENGTH)
-            throw new IllegalArgumentException("User ID must be a non-empty string with a maximum length of " + MAX_USER_ID_LENGTH + " characters.");
+            throw new InvalidParameterException("User ID must be a non-empty string with a maximum length of " + MAX_USER_ID_LENGTH + " characters.");
 
         this.id = userId;
     }

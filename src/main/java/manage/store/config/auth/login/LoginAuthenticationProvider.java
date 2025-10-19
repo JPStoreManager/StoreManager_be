@@ -2,7 +2,7 @@ package manage.store.config.auth.login;
 
 import lombok.RequiredArgsConstructor;
 import manage.store.config.auth.login.user.LoginUserDetailsServiceImpl;
-import manage.store.dto.common.BaseResponse;
+import manage.store.dto.common.BaseResult;
 import manage.store.dto.user.login.LoginRequest;
 import manage.store.service.user.login.LoginService;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -29,8 +29,8 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
         String id = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        BaseResponse loginResult = loginService.login(new LoginRequest(id, password));
-        if(!loginResult.getResult().isSuccess()) throw new AuthenticationServiceException("Login failed");
+        BaseResult loginResult = loginService.login(new LoginRequest(id, password));
+        if(!loginResult.isSuccess()) throw new AuthenticationServiceException("Login failed. msg: " + loginResult.getMsg());
 
         UserDetails userDetails = loginUserDetailsService.loadUserByUsername(id);
         if (userDetails == null) throw new AuthenticationServiceException("User not found with username: " + id);

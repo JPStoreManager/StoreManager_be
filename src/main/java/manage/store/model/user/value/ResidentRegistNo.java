@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 public class ResidentRegistNo {
     private static final int LENGTH = 13;
 
@@ -7,7 +9,7 @@ public class ResidentRegistNo {
 
     public ResidentRegistNo(String residentRegistNo) {
         if (residentRegistNo == null || residentRegistNo.length() != LENGTH) {
-            throw new IllegalArgumentException("Resident registration number is null or does not have the correct length.");
+            throw new InvalidParameterException("Resident registration number is null or does not have the correct length.");
         }
 
         this.residentRegistNo = residentRegistNo;

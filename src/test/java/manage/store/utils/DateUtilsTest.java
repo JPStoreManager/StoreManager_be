@@ -1,6 +1,7 @@
 package manage.store.utils;
 
 import manage.store.consts.Tags;
+import manage.store.exception.common.InvalidParameterException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ class DateUtilsTest {
         final int year = 0, month = 2;
 
         // When & Then
-        assertThrows(IllegalArgumentException.class, () -> DateUtils.getDaysCntInMonth(year, month));
+        assertThrows(InvalidParameterException.class, () -> DateUtils.getDaysCntInMonth(year, month));
     }
 
     @Test
@@ -44,8 +45,8 @@ class DateUtilsTest {
         final int year = 2023, invalidMonth1 = 13, invalidMonth2 = 0; // 잘못된 월
 
         // When & Then
-        assertThrows(IllegalArgumentException.class, () -> DateUtils.getDaysCntInMonth(year, invalidMonth1));
-        assertThrows(IllegalArgumentException.class, () -> DateUtils.getDaysCntInMonth(year, invalidMonth2));
+        assertThrows(InvalidParameterException.class, () -> DateUtils.getDaysCntInMonth(year, invalidMonth1));
+        assertThrows(InvalidParameterException.class, () -> DateUtils.getDaysCntInMonth(year, invalidMonth2));
     }
 
     @Test
@@ -75,7 +76,7 @@ class DateUtilsTest {
 
         // When & Then
         for (String invalidDateStr : invalidDateString) {
-            assertThrows(IllegalArgumentException.class, () -> DateUtils.getDayOfWeek(invalidDateStr));
+            assertThrows(InvalidParameterException.class, () -> DateUtils.getDayOfWeek(invalidDateStr));
         }
     }
 
