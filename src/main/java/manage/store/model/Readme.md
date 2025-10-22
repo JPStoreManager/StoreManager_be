@@ -7,7 +7,7 @@
 - 값 객체의 생성자에서는 주입하는 값에 대한 검증이 이루어 져야 한다.
   ```
   public Money(Long amount) {
-    if (amount == null || amount < 0) throw new IllegalArgumentException("Amount must be a non-negative value.");
+    if (amount == null || amount < 0) throw new InvalidParameterException("Amount must be a non-negative value.");
 
     this.amount = amount;
   }
@@ -25,5 +25,43 @@
     @JsonValue
     public Long value() {
         return amount;
+    }
+    ```
+  
+- 최종 Template Method
+    ```
+    public class {ClassName} {
+    
+        private {ValueType} value;
+    
+        public {ClassName}({ValueType} value) {
+            if(!{ValueValidationMethod}) throw new InvalidParameterException({errorMsg});
+    
+            this.value = value;
+        }
+    
+        public String value() {
+            return value;
+        }
+    
+        public {ClassName} setValue({ValueType} value) {
+            return new {ClassName}(value);
+        }
+    
+        @Override
+        public String toString() {
+            return value;
+        }
+    
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+    
+            {ClassName} that = ({ClassName}) o;
+    
+            return {value comparision logic};
+        }
+    
     }
     ```

@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 import java.time.LocalDate;
 
 public class WorkDate {
@@ -8,7 +10,7 @@ public class WorkDate {
 
     public WorkDate(LocalDate workStartDate) {
         if (workStartDate == null) {
-            throw new IllegalArgumentException("Work start date cannot be null.");
+            throw new InvalidParameterException("Work start date cannot be null.");
         }
 
         this.workStartDate = workStartDate;

@@ -1,13 +1,14 @@
 package manage.store.model.money.sales.value;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import manage.store.exception.common.InvalidParameterException;
 
 public class Money {
 
     private Long amount;
 
     public Money(Long amount) {
-        if (amount == null || amount < 0) throw new IllegalArgumentException("Amount must be a non-negative value.");
+        if (amount == null || amount < 0) throw new InvalidParameterException("Amount must be a non-negative value.");
 
         this.amount = amount;
     }
@@ -18,7 +19,7 @@ public class Money {
     }
 
     public Money add(Money money) {
-        if (money == null) throw new IllegalArgumentException("Money to add cannot be null.");
+        if (money == null) throw new InvalidParameterException("Money to add cannot be null.");
 
         return new Money(this.amount + money.amount);
     }

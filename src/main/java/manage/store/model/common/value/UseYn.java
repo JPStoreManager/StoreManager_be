@@ -2,6 +2,7 @@ package manage.store.model.common.value;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import manage.store.exception.common.InvalidParameterException;
 
 @Getter
 @RequiredArgsConstructor
@@ -19,6 +20,6 @@ public enum UseYn {
                 return useYn;
             }
         }
-        throw new IllegalArgumentException("Invalid UseYn code: " + code);
+        throw new InvalidParameterException("Invalid UseYn code: " + code);
     }
 }

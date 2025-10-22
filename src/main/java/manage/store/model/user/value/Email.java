@@ -1,5 +1,7 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 import java.util.regex.Pattern;
 
 public class Email {
@@ -11,7 +13,7 @@ public class Email {
 
     public Email(String email) {
         if (email == null || !EMAIL_PATTERN.matcher(email).matches()) {
-            throw new IllegalArgumentException("Invalid email format");
+            throw new InvalidParameterException("Invalid email format");
         }
         this.email = email;
     }

@@ -1,8 +1,7 @@
 package manage.store.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import manage.store.dto.common.BaseResponse;
-import manage.store.dto.common.ParameterValidationFailResponse;
+import manage.store.dto.common.ApiResponse;
 import manage.store.utils.ExceptionUtils;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.consts.Message;
@@ -27,10 +26,10 @@ public class BaseController {
      * 각 API의 바디 파라미터 검증 실패 시 처리 로직
      */
     @ExceptionHandler({InvalidParameterException.class, MethodArgumentNotValidException.class, MissingRequestHeaderException.class})
-    public ResponseEntity<BaseResponse> handleInvalidParameterException(Exception e) {
+    public ResponseEntity<ApiResponse> handleInvalidParameterException(Exception e) {
         log.info("Invalid Parameter was inputted. Error Message: {}", ExceptionUtils.getExceptionErrorMsg(e));
 
-        return ResponseEntity.badRequest().body(new ParameterValidationFailResponse(Message.FIND_PW_FAIL_INVALID_PARAM_OR_ACCESS));
+        return ResponseEntity.badRequest().body(ApiResponse.fail(Message.ERROR_INVALID_API_CALL));
     }
 
 }

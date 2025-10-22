@@ -1,5 +1,6 @@
 package manage.store.utils;
 
+import manage.store.exception.common.InvalidParameterException;
 import org.springframework.util.StringUtils;
 
 import java.time.DayOfWeek;
@@ -14,11 +15,11 @@ public class DateUtils {
      * @param year 년도 (1 이상)
      * @param month 월 (1부터 12까지)
      * @return 해당 월의 날짜 수
-     * @throws IllegalArgumentException 만약 연도가 1보다 작거나, 월이 1보다 작거나 12보다 큰 경우 예외를 발생시킵니다.
+     * @throws InvalidParameterException 만약 연도가 1보다 작거나, 월이 1보다 작거나 12보다 큰 경우 예외를 발생시킵니다.
      */
     public static int getDaysCntInMonth(Integer year, Integer month) {
         if (!(isYearValid(year) && isMonthValid(month))) {
-            throw new IllegalArgumentException("Month must be between 1 and 12");
+            throw new InvalidParameterException("Month must be between 1 and 12");
         }
 
         return YearMonth.of(year, month).lengthOfMonth();
@@ -31,7 +32,7 @@ public class DateUtils {
      */
     public static DayOfWeek getDayOfWeek(String date) {
         if (!StringUtils.hasText(date)) {
-            throw new IllegalArgumentException("Date string cannot be null or empty");
+            throw new InvalidParameterException("Date string cannot be null or empty");
         }
 
         try {
@@ -39,7 +40,7 @@ public class DateUtils {
 
             return localDate.getDayOfWeek();
         }catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format. Please use 'yyyy-MM-dd'. parameter: " + date);
+            throw new InvalidParameterException("Invalid date format. Please use 'yyyy-MM-dd'. parameter: " + date);
         }
     }
 

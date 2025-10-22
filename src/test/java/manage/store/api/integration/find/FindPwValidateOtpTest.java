@@ -2,10 +2,8 @@ package manage.store.api.integration.find;
 
 import com.google.gson.Gson;
 import manage.store.StoreManagerApplication;
-import manage.store.dto.user.find.FindPwSendOtpRequest;
-import manage.store.dto.user.find.FindPwSendOtpResponse;
-import manage.store.dto.user.find.FindPwValidateOtpRequest;
-import manage.store.dto.user.find.FindUserPwSession;
+import manage.store.dto.common.ApiResponse;
+import manage.store.dto.user.find.*;
 import manage.store.repository.user.account.mapper.UserAccountMapper;
 import manage.store.utils.ApiPathUtils;
 import manage.store.model.common.value.SuccessFlag;
@@ -29,6 +27,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.shaded.com.google.common.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -91,11 +92,12 @@ public class FindPwValidateOtpTest extends BaseIntegration {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(sendOtpRequest))).andReturn();
 
-        FindPwSendOtpResponse findPwSendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), FindPwSendOtpResponse.class);
+        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
 
         // 2) validateOtp
         String otpNo = mapper.selectUserById(user.getId().value()).getOtpNo().value();
-        final String sessionId = findPwSendOtpResponse.getSessionId();
+        final String sessionId = sendOtpResponse.getData().getSessionId();
 
         final FindPwValidateOtpRequest validateOtpRequest = new FindPwValidateOtpRequest();
         validateOtpRequest.setUserId(user.getId().value());
@@ -114,7 +116,7 @@ public class FindPwValidateOtpTest extends BaseIntegration {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(SuccessFlag.Y.getValue()))
-                .andExpect(jsonPath("$.sessionId").value(sessionId));
+                .andExpect(jsonPath("$.data.sessionId").value(sessionId));
         addDocs(result);
     }
 
@@ -188,10 +190,11 @@ public class FindPwValidateOtpTest extends BaseIntegration {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(sendOtpRequest))).andReturn();
 
-        FindPwSendOtpResponse findPwSendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), FindPwSendOtpResponse.class);
+        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
 
         // 2) validateOtp
-        final String sessionId = findPwSendOtpResponse.getSessionId();
+        final String sessionId = sendOtpResponse.getData().getSessionId();
 
         final FindPwValidateOtpRequest validateOtpRequest = new FindPwValidateOtpRequest();
         validateOtpRequest.setUserId(user.getId().value());
@@ -229,7 +232,8 @@ public class FindPwValidateOtpTest extends BaseIntegration {
                 responseFields(
                         fieldWithPath("result").description("OTP 검증 성공 여부"),
                         fieldWithPath("msg").description("성공 / 실패에 대한 메세지"),
-                        fieldWithPath("sessionId").description("비밀번호 찾기 세션 ID"),
+                        fieldWithPath("data").description("응답 데이터").type(FindPwValidateOtpResponse.class),
+                        fieldWithPath("data.sessionId").description("비밀번호 찾기에 활용되는 세션 ID"),
                         fieldWithPath("timestamp").description("API 응답일시")
                 )));
     }

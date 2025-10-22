@@ -3,6 +3,7 @@ package manage.store.service.money;
 import lombok.RequiredArgsConstructor;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.RegistDate;
 import manage.store.repository.money.SalesRepository;
 import manage.store.utils.DateUtils;
@@ -32,7 +33,7 @@ public class SalesServiceImpl implements SalesService {
         final int month = request.getMonth();
 
         if(!(StringUtils.hasText(branchCd) && DateUtils.isYearValid(year) && DateUtils.isMonthValid(month))) {
-            throw new IllegalArgumentException("Invalid parameters for getting monthly sales. Branch code: " + branchCd + ", Year: " + year + ", Month: " + month);
+            throw new InvalidParameterException("Invalid parameters for getting monthly sales. Branch code: " + branchCd + ", Year: " + year + ", Month: " + month);
         }
 
         final List<GetMonthSalesResponse.DailySales> monthSales = getDefaultMonthSalesResponse(branchCd, year, month);

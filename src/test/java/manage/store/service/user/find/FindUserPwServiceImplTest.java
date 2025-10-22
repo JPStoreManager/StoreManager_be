@@ -1,6 +1,6 @@
 package manage.store.service.user.find;
 
-import manage.store.dto.common.BaseResponse;
+import manage.store.dto.common.BaseResult;
 import manage.store.dto.user.find.FindPwSendOtpRequest;
 import manage.store.dto.user.find.FindPwUpdatePwRequest;
 import manage.store.dto.user.find.FindPwValidateOtpRequest;
@@ -80,11 +80,10 @@ class FindUserPwServiceImplTest {
                     .thenReturn(otp.value());
 
             // When
-            BaseResponse result = findUserService.sendOtp(request);
+            BaseResult result = findUserService.sendOtp(request);
 
             // Then
             assertThat(result.getResult()).isEqualTo(SuccessFlag.Y);
-            assertThat(result.getMsg()).isEqualTo(Message.FIND_PW_SEND_OTP_SUCCESS);
         }
     }
 
@@ -197,11 +196,10 @@ class FindUserPwServiceImplTest {
         given(userAuthService.isUserActivated(user)).willReturn(true);
 
         // When
-        BaseResponse result = findUserService.validateOtp(request);
+        BaseResult result = findUserService.validateOtp(request);
 
         // Then
         assertThat(result.getResult()).isEqualTo(SuccessFlag.Y);
-        assertThat(result.getMsg()).isEqualTo(Message.FIND_PW_VALIDATE_OTP_SUCCESS);
     }
 
     @Test
@@ -315,7 +313,7 @@ class FindUserPwServiceImplTest {
         given(userAuthService.isUserActivated(user)).willReturn(true);
 
         // When
-        BaseResponse result = findUserService.validateOtp(request);
+        BaseResult result = findUserService.validateOtp(request);
 
         // Then
         assertThat(result.getResult()).isEqualTo(SuccessFlag.N);
@@ -345,11 +343,10 @@ class FindUserPwServiceImplTest {
         given(userAuthService.isUserActivated(user)).willReturn(true);
 
         // When
-        BaseResponse result = findUserService.updatePassword(request);
+        BaseResult result = findUserService.updatePassword(request);
 
         // Then
         assertThat(result.getResult()).isEqualTo(SuccessFlag.Y);
-        assertThat(result.getMsg()).isEqualTo(Message.FIND_PW_UPDATE_PW_SUCCESS);
     }
 
     @Test

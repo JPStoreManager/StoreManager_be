@@ -3,6 +3,7 @@ package manage.store.model.user.user;
 
 import lombok.Getter;
 import lombok.ToString;
+import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.DbUpdateDate;
 import manage.store.model.common.value.DeleteFlag;
 import manage.store.model.user.value.*;
@@ -263,7 +264,7 @@ public class User {
         this.lastUpdatedDate = user.lastUpdatedDate;
 
         if (!isValid()) {
-            throw new IllegalArgumentException("Invalid User object.");
+            throw new InvalidParameterException("Invalid User object.");
         }
     }
 
@@ -296,7 +297,7 @@ public class User {
         this.lastUpdatedDate = lastUpdatedDate;
 
         if (!isValid()) {
-            throw new IllegalArgumentException("Invalid User object.");
+            throw new InvalidParameterException("Invalid User object.");
         }
     }
 

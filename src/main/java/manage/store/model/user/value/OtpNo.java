@@ -1,12 +1,14 @@
 package manage.store.model.user.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 public class OtpNo {
 
     private String otpNo;
 
     public OtpNo(String otpNo) {
         if (otpNo == null || otpNo.isEmpty() || otpNo.length() > 6) {
-            throw new IllegalArgumentException("OTP number must be a non-empty string with a maximum length of 6 characters.");
+            throw new InvalidParameterException("OTP number must be a non-empty string with a maximum length of 6 characters.");
         }
         this.otpNo = otpNo;
     }

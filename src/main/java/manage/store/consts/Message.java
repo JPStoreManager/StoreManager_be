@@ -6,9 +6,12 @@ public interface Message {
     /** 작명 방법: {기능}_{SUCCESS/FAIL}_{상세내용} */
 
     /** 로그인 */
-    String LOGIN_SUCCESS = "로그인 성공";
+    String LOGIN_SUCCESS = "로그인되었습니다.";
     String LOGIN_FAIL_INVALID_PARAM = "올바른 정보를 입력하세요.";
     String LOGIN_FAIL_NOT_EXIST_USER = "존재하지 아이디 이거나 비밀번호가 올바르지 않습니다";
+
+    String LOGOUT_SUCCESS = "로그아웃되었습니다.";
+    String LOGOUT_FAIL_NOT_LOGGED_IN = "로그아웃에 실패하였습니다. 잠시 후 다시 시도해주세요.";
 
     /** 비밀번호 찾기 */
     String FIND_PW_FAIL_INVALID_PARAM_OR_ACCESS = "올바른 정보를 입력하지 않았거나 잘못된 접근입니다.";
@@ -17,11 +20,15 @@ public interface Message {
     String FIND_PW_VALIDATE_OTP_SUCCESS = "OTP 인증 성공";
     String FIND_PW_VALIDATE_OTP_FAIL_NOT_VALID = "OTP 인증 실패";
     String FIND_PW_UPDATE_PW_SUCCESS = "비밀번호 업데이트 성공";
-    String FIND_PW_UPDATE_PW_FAIL_INVALID_PW = "올바르지 않는 비밀번호입니다.";
+    String FIND_PW_UPDATE_PW_FAIL_INVALID_PW = "신규 비밀번호가 올바르지 않습니다.";
 
     /** 인증 */
     String AUTH_ME_SUCCESS = "사용자 인증 성공";
     String AUTH_ME_FAIL = "존재하지 않는 아이디이거나 비밀번호가 올바르지 않습니다.";
-    String AUTH_FAIL_LACK_AUTH = "권한이 부족합니다. 관리자에게 문의하세요.";
+    String AUTH_FAIL_LACK_AUTH = "접근 권한이 없습니다. 관리자에게 문의하세요.";
     String AUTH_FAIL_NOT_AUTHENTICATED = "인증되지 않은 요청입니다. 로그인 후 다시 시도해주세요.";
+
+    /** 오류 */
+    String ERROR_INTERNAL_SERVER_ERROR = "시스템 오류가 발생하였습니다. 관리자에게 연락해주세요.\nchickenman10@naver.com";
+    String ERROR_INVALID_API_CALL = "올바르지 않은 API 호출입니다.";
 }

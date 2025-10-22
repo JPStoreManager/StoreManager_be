@@ -1,5 +1,7 @@
 package manage.store.model.common.value;
 
+import manage.store.exception.common.InvalidParameterException;
+
 import java.util.Objects;
 
 public class DeleteFlag {
@@ -19,7 +21,7 @@ public class DeleteFlag {
         if ("N".equalsIgnoreCase(value)) {
             return NO;
         }
-        throw new IllegalArgumentException("유효하지 않은 삭제 플래그 값입니다: " + value);
+        throw new InvalidParameterException("유효하지 않은 삭제 플래그 값입니다: " + value);
     }
 
     public String value() {

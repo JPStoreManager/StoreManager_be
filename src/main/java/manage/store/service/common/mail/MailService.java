@@ -34,6 +34,7 @@ public class MailService {
      * @param to 수신자 이메일
      * @param otp 전송할 otp
      * @throws IOException 메일 전송 과정에서 발생한 오류
+     * @throws InvalidParameterException to 또는 otp가 null인 경우
      */
     public void sendOtpMail(Email to, OtpNo otp) throws IOException {
         if(to == null || otp == null) throw new InvalidParameterException("to email or otp is empty");
