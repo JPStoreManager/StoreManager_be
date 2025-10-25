@@ -8,14 +8,14 @@
         created_by, created_date, last_updated_by, last_updated_date
     </sql>
 
-    <select id="selectByYear" resultType="manage.store.model.money.sales.DailySales.DailySales">
+    <select id="selectByYear" resultType="manage.store.model.money.sales.DailySales.StoreSales">
         SELECT <include refid="salesCol"/>
         FROM sales
         WHERE branch_cd = #{branchCd}
           AND DATE_FORMAT(regist_date, '%Y') = #{year}
     </select>
 
-    <select id="selectByMonth" resultType="manage.store.model.money.sales.DailySales.DailySales">
+    <select id="selectByMonth" resultType="manage.store.model.money.sales.DailySales.StoreSales">
         SELECT <include refid="salesCol"/>
         FROM sales
         WHERE branch_cd = #{branchCd}

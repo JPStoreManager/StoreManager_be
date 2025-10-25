@@ -2,7 +2,7 @@ package manage.store.repository.money;
 
 import manage.store.exception.common.db.DatabaseOperationException;
 import manage.store.exception.common.InvalidParameterException;
-import manage.store.model.money.sales.DailySales.DailySales;
+import manage.store.model.money.sales.DailySales.StoreSales;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface SalesRepository {
      * @return List<Sales> - 매출 정보 리스트
      * @throws InvalidParameterException 잘못된 파라미터
      */
-    List<DailySales> selectSalesByYear(String branchCd, Integer year);
+    List<StoreSales> selectSalesByYear(String branchCd, Integer year);
 
     /**
      * 특정 월의 매출 정보 조회
@@ -25,7 +25,7 @@ public interface SalesRepository {
      * @return List<Sales> - 매출 정보 리스트
      * @throws InvalidParameterException 잘못된 파라미터
      */
-    List<DailySales> selectSalesByMonth(String branchCd, Integer year, Integer month);
+    List<StoreSales> selectSalesByMonth(String branchCd, Integer year, Integer month);
 
 
     /**
@@ -35,7 +35,7 @@ public interface SalesRepository {
      * @throws InvalidParameterException 잘못된 파라미터
      * @throws DatabaseOperationException 데이터베이스 작업 실패
      */
-    int insertSales(DailySales sales);
+    int insertSales(StoreSales sales);
 
     /**
      * 매출 정보 업데이트
@@ -44,6 +44,6 @@ public interface SalesRepository {
      * @throws InvalidParameterException 잘못된 파라미터
      * @throws DatabaseOperationException 데이터베이스 작업 실패
      */
-    int updateSales(DailySales sales);
+    int updateSales(StoreSales sales);
 
 }

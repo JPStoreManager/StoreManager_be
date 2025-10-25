@@ -4,9 +4,8 @@ package manage.store.repository.money;
 import lombok.RequiredArgsConstructor;
 import manage.store.repository.BaseRepository;
 import manage.store.utils.DateUtils;
-import manage.store.exception.common.db.DatabaseOperationException;
 import manage.store.exception.common.InvalidParameterException;
-import manage.store.model.money.sales.DailySales.DailySales;
+import manage.store.model.money.sales.DailySales.StoreSales;
 import manage.store.repository.money.mapper.SalesMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -21,7 +20,7 @@ public class SalesRepositoryImpl extends BaseRepository implements SalesReposito
     private final SalesMapper salesMapper;
 
     @Override
-    public List<DailySales> selectSalesByYear(String branchCd, Integer year) {
+    public List<StoreSales> selectSalesByYear(String branchCd, Integer year) {
         if(!isSelectSalesParamValid(branchCd, year)){
             throw new InvalidParameterException("Invalid parameters for selecting sales. Branch code: " + branchCd + ", Registered date: " + year);
         }
@@ -35,7 +34,7 @@ public class SalesRepositoryImpl extends BaseRepository implements SalesReposito
     }
 
     @Override
-    public List<DailySales> selectSalesByMonth(String branchCd, Integer year, Integer month) {
+    public List<StoreSales> selectSalesByMonth(String branchCd, Integer year, Integer month) {
         if(!isSelectSalesParamValid(branchCd, year, month)){
             throw new InvalidParameterException("Invalid parameters for selecting sales. Branch code: " + branchCd + ", Registered date: " + year + ", Month: " + month);
         }
@@ -49,7 +48,7 @@ public class SalesRepositoryImpl extends BaseRepository implements SalesReposito
     }
 
     @Override
-    public int insertSales(DailySales sales) {
+    public int insertSales(StoreSales sales) {
         if(!isUpdateSalesParamValid(sales)){
             throw new InvalidParameterException("Invalid sales data provided for insertion. Parameters: " + sales);
         }
@@ -68,7 +67,7 @@ public class SalesRepositoryImpl extends BaseRepository implements SalesReposito
     }
 
     @Override
-    public int updateSales(DailySales sales) {
+    public int updateSales(StoreSales sales) {
         if(!isUpdateSalesParamValid(sales)){
             throw new InvalidParameterException("Invalid sales data provided for update. Parameters: " + sales);
         }
@@ -94,7 +93,7 @@ public class SalesRepositoryImpl extends BaseRepository implements SalesReposito
         return StringUtils.hasText(branchCd) && DateUtils.isYearValid(year);
     }
 
-    private boolean isUpdateSalesParamValid(DailySales sales) {
+    private boolean isUpdateSalesParamValid(StoreSales sales) {
         return sales != null && sales.isValid();
     }
 }

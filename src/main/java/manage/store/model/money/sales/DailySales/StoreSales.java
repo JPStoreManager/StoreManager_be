@@ -9,7 +9,7 @@ import manage.store.model.user.value.UserId;
 
 import java.text.SimpleDateFormat;
 @Data
-public class DailySales {
+public class StoreSales {
 
     private String branchCd;
     private RegistDate registDate;
