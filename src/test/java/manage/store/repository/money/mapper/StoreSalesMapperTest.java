@@ -4,7 +4,7 @@ import manage.store.config.db.DBConfiguration;
 import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
 import manage.store.model.common.value.RegistDate;
-import manage.store.model.money.sales.DailySales.DailySales;
+import manage.store.model.money.sales.DailySales.StoreSales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
 import manage.store.testUtils.common.StoreBranchTestUtils;
@@ -34,19 +34,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles(Profiles.TEST)
 @ContextConfiguration(classes = DBConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class DailySalesMapperTest extends BaseDockerTest {
+class StoreSalesMapperTest extends BaseDockerTest {
 
     @Autowired
     private SalesMapper salesMapper;
 
-    private DailySales[] salesList;
+    private StoreSales[] salesList;
 
     @BeforeEach
     public void setUp() {
         final String branchCd = StoreBranchTestUtils.DUMMY_BRANCH1.getBranchCd();
-        salesList = new DailySales[3];
+        salesList = new StoreSales[3];
         for (int i = 1; i <= salesList.length; i++) {
-            DailySales sales = SalesUtils.createSales(branchCd, "2010-01-0" + i, new UserId("system"));
+            StoreSales sales = SalesUtils.createSales(branchCd, "2010-01-0" + i, new UserId("system"));
             sales.setBranchCd(branchCd);
 
             salesList[i - 1] = sales;
@@ -63,12 +63,12 @@ class DailySalesMapperTest extends BaseDockerTest {
         final String year = salesList[0].getRegistDate().value().substring(0, 4);
 
         // When
-        final List<DailySales> result = salesMapper.selectByYear(branchCd, Integer.parseInt(year));
+        final List<StoreSales> result = salesMapper.selectByYear(branchCd, Integer.parseInt(year));
 
         // Then
         assertThat(result).isNotEmpty();
 
-        final DailySales dbSales = result.stream()
+        final StoreSales dbSales = result.stream()
                 .filter(s -> s.getRegistDate().equals(salesList[0].getRegistDate()))
                 .findFirst()
                 .orElse(null);
@@ -80,12 +80,12 @@ class DailySalesMapperTest extends BaseDockerTest {
     @DisplayName("selectByYear 실패 - 데이터 없음")
     void selectByYear_fail_noData() {
         // Given
-        final DailySales notExistSales = SalesUtils.getNotExistSales();
+        final StoreSales notExistSales = SalesUtils.getNotExistSales();
         final String branchCd = notExistSales.getBranchCd();
         final String year = notExistSales.getRegistDate().value().substring(0, 4);
 
         // When
-        final List<DailySales> result = salesMapper.selectByYear(branchCd, Integer.parseInt(year));
+        final List<StoreSales> result = salesMapper.selectByYear(branchCd, Integer.parseInt(year));
 
         // Then
         assertThat(result).isEmpty();
@@ -101,11 +101,11 @@ class DailySalesMapperTest extends BaseDockerTest {
         final Integer month = Integer.parseInt(salesList[0].getRegistDate().value().substring(5, 7));
 
         // When
-        final List<DailySales> result = salesMapper.selectByMonth(branchCd, year, month);
+        final List<StoreSales> result = salesMapper.selectByMonth(branchCd, year, month);
 
         // Then
         assertThat(result).isNotEmpty();
-        final DailySales dbSales = result.stream()
+        final StoreSales dbSales = result.stream()
                 .filter(s -> s.getRegistDate().equals(salesList[0].getRegistDate()))
                 .findFirst()
                 .orElse(null);
@@ -118,13 +118,13 @@ class DailySalesMapperTest extends BaseDockerTest {
     @DisplayName("selectByMonth 실패 - 데이터 없음")
     void selectByMonth_fail_noData() {
         // Given
-        final DailySales notExistSales = SalesUtils.getNotExistSales();
+        final StoreSales notExistSales = SalesUtils.getNotExistSales();
         final String branchCd = notExistSales.getBranchCd();
         final Integer year = Integer.parseInt(notExistSales.getRegistDate().value().substring(0, 4));
         final Integer month = Integer.parseInt(notExistSales.getRegistDate().value().substring(5, 7));
 
         // When
-        final List<DailySales> result = salesMapper.selectByMonth(branchCd, year, month);
+        final List<StoreSales> result = salesMapper.selectByMonth(branchCd, year, month);
 
         // Then
         assertThat(result).isEmpty();
@@ -140,7 +140,7 @@ class DailySalesMapperTest extends BaseDockerTest {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         final String tomorrowDate = sdf.format(calendar.getTime());
 
-        final DailySales sales = SalesUtils.createSales(StoreBranchTestUtils.DUMMY_BRANCH1.getBranchCd(), tomorrowDate, salesList[0].getCreatedBy());
+        final StoreSales sales = SalesUtils.createSales(StoreBranchTestUtils.DUMMY_BRANCH1.getBranchCd(), tomorrowDate, salesList[0].getCreatedBy());
 
         // When
         final int result = salesMapper.insert(sales);
@@ -150,7 +150,7 @@ class DailySalesMapperTest extends BaseDockerTest {
 
         final int year = Integer.parseInt(sales.getRegistDate().value().substring(0, 4));
         final int month = Integer.parseInt(sales.getRegistDate().value().substring(5, 7));
-        final DailySales dbSales = salesMapper.selectByMonth(sales.getBranchCd(), year, month).stream()
+        final StoreSales dbSales = salesMapper.selectByMonth(sales.getBranchCd(), year, month).stream()
                 .filter(s -> s.getRegistDate().equals(new RegistDate(tomorrowDate)))
                 .findFirst()
                 .orElse(null);
@@ -161,7 +161,7 @@ class DailySalesMapperTest extends BaseDockerTest {
     @DisplayName("insert 실패 - 중복 데이터(PK)")
     void insert_fail_duplicate() {
         // Given
-        final DailySales sales = salesList[0];
+        final StoreSales sales = salesList[0];
 
         // When - Then
         assertThrows(DuplicateKeyException.class, () -> salesMapper.insert(sales));
@@ -172,7 +172,7 @@ class DailySalesMapperTest extends BaseDockerTest {
     @DisplayName("update 성공")
     void update_success() {
         // Given
-        final DailySales expected = salesList[0];
+        final StoreSales expected = salesList[0];
         expected.setCardSales(new Money(expected.getCardSales().value() + 99999L));
         expected.setCashSales(new Money(expected.getCashSales().value() + 99999L));
         expected.setComment("Updated comment");
@@ -186,7 +186,7 @@ class DailySalesMapperTest extends BaseDockerTest {
 
         final int year = Integer.parseInt(expected.getRegistDate().value().substring(0, 4));
         final int month = Integer.parseInt(expected.getRegistDate().value().substring(5, 7));
-        final DailySales actual = salesMapper.selectByMonth(expected.getBranchCd(), year, month).stream()
+        final StoreSales actual = salesMapper.selectByMonth(expected.getBranchCd(), year, month).stream()
                 .filter(s -> s.getRegistDate().equals(expected.getRegistDate()))
                 .findFirst().orElse(null);
 
@@ -197,7 +197,7 @@ class DailySalesMapperTest extends BaseDockerTest {
     @DisplayName("update 실패 - 존재하지 않는 데이터")
     void update_fail_noData() {
         // Given
-        final DailySales sales = SalesUtils.createSales("noBranch", "1999-01-01", new UserId("testUser"));
+        final StoreSales sales = SalesUtils.createSales("noBranch", "1999-01-01", new UserId("testUser"));
 
         // When
         final int result = salesMapper.update(sales);

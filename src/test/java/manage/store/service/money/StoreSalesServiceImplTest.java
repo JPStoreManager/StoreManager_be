@@ -4,11 +4,14 @@ import manage.store.consts.Tags;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
 import manage.store.exception.common.InvalidParameterException;
+import manage.store.dto.money.month.SalesDailySummary;
 import manage.store.model.common.value.RegistDate;
-import manage.store.model.money.sales.DailySales.DailySales;
+import manage.store.model.money.sales.DailySales.StoreSales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
 import manage.store.repository.money.SalesRepository;
+import manage.store.service.money.sales.SalesServiceImpl;
+import manage.store.service.money.sales.SalesSummaryService;
 import manage.store.testUtils.money.SalesUtils;
 import manage.store.utils.DateUtils;
 import org.junit.jupiter.api.Assertions;
@@ -26,14 +29,18 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @Tag(Tags.Test.UNIT)
 @ExtendWith(MockitoExtension.class)
-public class DailySalesServiceImplTest {
+public class StoreSalesServiceImplTest {
 
     @Mock
     private SalesRepository salesRepository;
+
+    @Mock
+    private SalesSummaryService salesSummaryService;
 
     @InjectMocks
     private SalesServiceImpl salesService;
@@ -46,7 +53,7 @@ public class DailySalesServiceImplTest {
         final int year = 2023, month = 10;
         final int sampleSize = 15;
 
-        final List<DailySales> sampleSales = getSampleSales(branchCd, year, month).stream()
+        final List<StoreSales> sampleSales = getSampleSales(branchCd, year, month).stream()
                 .peek(s -> {
                     int tmpMoney = Integer.parseInt(s.getRegistDate().value().substring(8, 10));
                     s.setCashSales(new Money((long) tmpMoney));
@@ -55,7 +62,42 @@ public class DailySalesServiceImplTest {
                 .filter(sales -> sales.getRegistDate().value().compareTo(String.format("%04d-%02d-%d", year, month, sampleSize)) <= 0)
                 .collect(Collectors.toList());
 
+        final List<SalesDailySummary> sampleSalesSummary = new ArrayList<>() {{
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 1), new Money(2L), new Money(2L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 2), new Money(4L), new Money(6L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 3), new Money(10L), new Money(12L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 4), new Money(18L), new Money(20L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 5), new Money(28L), new Money(30L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 6), new Money(40L), new Money(42L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 7), new Money(54L), new Money(56L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 8), new Money(70L), new Money(72L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 9), new Money(18L), new Money(90L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 10), new Money(38L), new Money(110L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 11), new Money(60L), new Money(132L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 12), new Money(84L), new Money(156L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 13), new Money(110L), new Money(182L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 14), new Money(138L), new Money(210L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 15), new Money(168L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 16), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 17), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 18), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 19), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 20), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 21), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 22), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 23), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 24), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 25), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 26), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 27), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 28), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 29), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 30), new Money(0L), new Money(240L)));
+            add(new SalesDailySummary(branchCd, new RegistDate(year, month, 31), new Money(0L), new Money(240L)));
+        }};
+
         given(salesRepository.selectSalesByMonth(branchCd, year, month)).willReturn(sampleSales);
+        given(salesSummaryService.getMonthSalesSummary(any())).willReturn(sampleSalesSummary);
 
         // When
         final GetMonthSalesRequest request = new GetMonthSalesRequest(branchCd, year, month);
@@ -113,8 +155,15 @@ public class DailySalesServiceImplTest {
         // Given
         final String branchCd = "branch1";
         final int year = 2023, month = 10;
-        
+
+        final List<SalesDailySummary> sampleSalesSummary = new ArrayList<>() {{
+            for (int day = 1; day <= 31; day++) {
+                add(new SalesDailySummary(branchCd, new RegistDate(year, month, day)));
+            }
+        }};
+
         given(salesRepository.selectSalesByMonth(branchCd, year, month)).willReturn(new ArrayList<>());
+        given(salesSummaryService.getMonthSalesSummary(any())).willReturn(sampleSalesSummary);
 
         // When
         final GetMonthSalesRequest request = new GetMonthSalesRequest(branchCd, year, month);
@@ -140,7 +189,7 @@ public class DailySalesServiceImplTest {
     }
 
     @Test
-    @DisplayName("getMonthSales 실패_invalidParameters")
+    @DisplayName("getMonthSales 실패_inzvalidParameters")
     public void getMonthSalesTest_fail_invalidParameters() {
         final GetMonthSalesRequest invalidReq1 = new GetMonthSalesRequest(null, 2023, 10);
         assertThrows(InvalidParameterException.class, () -> salesService.getMonthSales(invalidReq1));
@@ -158,13 +207,13 @@ public class DailySalesServiceImplTest {
         assertThrows(InvalidParameterException.class, () -> salesService.getMonthSales(invalidReq5));
     }
 
-    private List<DailySales> getSampleSales(String branchCd, int year, int month) {
+    private List<StoreSales> getSampleSales(String branchCd, int year, int month) {
         final int daysCntInMonth = DateUtils.getDaysCntInMonth(year, month);
-        final List<DailySales> data = new ArrayList<>(daysCntInMonth);
+        final List<StoreSales> data = new ArrayList<>(daysCntInMonth);
         for (int i = 0; i < daysCntInMonth; i++) {
             String date = String.format("%04d-%02d-%02d", year, month, i + 1);
 
-            DailySales sales = SalesUtils.createSales(branchCd, date, new UserId("tester"));
+            StoreSales sales = SalesUtils.createSales(branchCd, date, new UserId("tester"));
             data.add(sales);
         }
         

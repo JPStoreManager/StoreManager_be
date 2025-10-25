@@ -1,4 +1,4 @@
-package manage.store.service.money;
+package manage.store.service.money.sales;
 
 
 import manage.store.dto.money.month.GetMonthSalesRequest;

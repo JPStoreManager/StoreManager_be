@@ -2,7 +2,7 @@ package manage.store.testUtils.money;
 
 import manage.store.model.common.value.DbUpdateDate;
 import manage.store.model.common.value.RegistDate;
-import manage.store.model.money.sales.DailySales.DailySales;
+import manage.store.model.money.sales.DailySales.StoreSales;
 import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
 import manage.store.testUtils.util.CommonUtils;
@@ -18,8 +18,8 @@ public interface SalesUtils {
      * @param createdBy 생성자
      * @return Sales 객체
      */
-    static DailySales createSales(String branchCd, String registDate, UserId createdBy) {
-        final DailySales sales = new DailySales();
+    static StoreSales createSales(String branchCd, String registDate, UserId createdBy) {
+        final StoreSales sales = new StoreSales();
         sales.setBranchCd(branchCd);
         sales.setRegistDate(new RegistDate(registDate));
         sales.setCardSales(new Money((long) (CommonUtils.getRandomInt() % 10000)));
@@ -32,16 +32,16 @@ public interface SalesUtils {
         return sales;
     }
 
-    static DailySales getNotExistSales() {
-        final DailySales sales = new DailySales();
+    static StoreSales getNotExistSales() {
+        final StoreSales sales = new StoreSales();
         sales.setBranchCd("NOT_EXIST");
         sales.setRegistDate(new RegistDate("1999-12-31"));
 
         return sales;
     }
 
-    static DailySales clone(DailySales from) {
-        final DailySales clone = new DailySales();
+    static StoreSales clone(StoreSales from) {
+        final StoreSales clone = new StoreSales();
         clone.setBranchCd(from.getBranchCd());
         clone.setRegistDate(from.getRegistDate());
         clone.setCardSales(from.getCardSales());
@@ -60,7 +60,7 @@ public interface SalesUtils {
      * @param expected 기대하는 Sales 객체
      * @param actual 실제 Sales 객체
      */
-    static void assertSales(DailySales expected, DailySales actual) {
+    static void assertSales(StoreSales expected, StoreSales actual) {
         assertThat(actual).isNotNull();
         assertThat(actual.getBranchCd()).isEqualTo(expected.getBranchCd());
         assertThat(actual.getRegistDate()).isEqualTo(expected.getRegistDate());

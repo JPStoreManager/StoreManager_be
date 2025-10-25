@@ -1,6 +1,6 @@
 package manage.store.repository.money.mapper;
 
-import manage.store.model.money.sales.DailySales.DailySales;
+import manage.store.model.money.sales.DailySales.StoreSales;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -9,15 +9,15 @@ import java.util.List;
 @Mapper
 public interface SalesMapper {
 
-    List<DailySales> selectByYear(@Param(value="branchCd") String branchCd,
+    List<StoreSales> selectByYear(@Param(value="branchCd") String branchCd,
                                   @Param(value="year") Integer year);
 
-    List<DailySales> selectByMonth(@Param(value="branchCd") String branchCd,
-                              @Param(value="year") Integer year,
-                              @Param(value="month") Integer month);
+    List<StoreSales> selectByMonth(@Param(value="branchCd") String branchCd,
+                                   @Param(value="year") Integer year,
+                                   @Param(value="month") Integer month);
 
-    int insert(DailySales sales);
+    int insert(StoreSales sales);
 
-    int update(DailySales sales);
+    int update(StoreSales sales);
 
 }
