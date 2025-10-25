@@ -3,6 +3,7 @@ package manage.store.service.money.sales;
 import manage.store.dto.money.month.BasicDailySales;
 import manage.store.dto.money.month.SalesDailySummary;
 import manage.store.exception.common.InvalidParameterException;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public interface SalesSummaryService {
      * @return List<SalesSummary> 월별 매출의 통계 데이터
      * @throws InvalidParameterException monthlySales가 null이거나 비어있을 경우
      */
+    @PreAuthorize("@salesAccessPolicy.canAccessStatistics()")
     List<SalesDailySummary> getMonthSalesSummary(List<BasicDailySales> monthlySales);
 
     // 년별 매출 통계 조회

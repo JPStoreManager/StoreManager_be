@@ -25,7 +25,6 @@ public class SalesSummaryServiceImpl implements SalesSummaryService {
      * @throws InvalidParameterException monthlySales가 null이거나 비어있을 경우
      */
     @Override
-    @PreAuthorize("salesAccessPolicy.canAccessStatistics()")
     public List<SalesDailySummary> getMonthSalesSummary(List<BasicDailySales> monthlySales) {
         if(monthlySales == null || monthlySales.isEmpty()){
             throw new InvalidParameterException("monthlySales cannot be null or empty");

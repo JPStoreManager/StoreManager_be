@@ -1,6 +1,7 @@
 package manage.store.service.money.sales;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import manage.store.dto.money.month.BasicDailySales;
 import manage.store.dto.money.month.GetMonthSalesRequest;
 import manage.store.dto.money.month.GetMonthSalesResponse;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SalesServiceImpl implements SalesService {
@@ -40,8 +42,12 @@ public class SalesServiceImpl implements SalesService {
 
         // 기본 매출 및 통계 데이터 조회
         final List<BasicDailySales> monthlyBasicSales = getBasicMonthSalesResponse(branchCd, year, month);
-        final List<SalesDailySummary> monthlySalesSummary = salesSummaryService.getMonthSalesSummary(monthlyBasicSales);
-//        final GetMonthSalesResponse salesExpenseUpdatedRes = setMonthSalesExpenseResponse(salesUpdatedRes, branchCd, year, month);
+        List<SalesDailySummary> monthlySalesSummary = new ArrayList<>();
+        try {monthlySalesSummary = salesSummaryService.getMonthSalesSummary(monthlyBasicSales);}
+        catch (Exception e) {
+            log.info("권한 부족으로 인한 매출 통계 조회 실패");
+        }
+        // TODO 지출에 대한 통계 추가 필요
 
         final List<GetMonthSalesResponse.DailySales> result = getMonthSalesResponse(monthlyBasicSales, monthlySalesSummary);
 
@@ -110,8 +116,7 @@ public class SalesServiceImpl implements SalesService {
         List<GetMonthSalesResponse.DailySales> monthSalesResponse = new ArrayList<>(monthBasicDailySales.size());
         for (int i = 0; i < monthBasicDailySales.size(); i++) {
             BasicDailySales basicDailySales = monthBasicDailySales.get(i);
-            SalesDailySummary salesDailySummary = monthSalesDailySummary.get(i);
-
+            // 기본 매출 데이터 설정
             GetMonthSalesResponse.DailySales dailySalesResponse = new GetMonthSalesResponse.DailySales();
             dailySalesResponse.setBranchCd(basicDailySales.getBranchCd());
             dailySalesResponse.setRegistDate(basicDailySales.getRegistDate());
@@ -119,8 +124,14 @@ public class SalesServiceImpl implements SalesService {
             dailySalesResponse.setCashSales(basicDailySales.getCashSales());
             dailySalesResponse.setTotalSales(basicDailySales.getTotalSales());
             dailySalesResponse.setCardPercentage(basicDailySales.getCardPercentage());
-            dailySalesResponse.setWeeklyTotalSales(salesDailySummary.getWeeklyTotalSales());
-            dailySalesResponse.setMonthTotalSales(salesDailySummary.getMonthTotalSales());
+
+            // 통계 데이터 설정
+            if(i < monthSalesDailySummary.size()) {
+                SalesDailySummary salesDailySummary = monthSalesDailySummary.get(i);
+
+                dailySalesResponse.setWeeklyTotalSales(salesDailySummary.getWeeklyTotalSales());
+                dailySalesResponse.setMonthTotalSales(salesDailySummary.getMonthTotalSales());
+            }
 
             monthSalesResponse.add(dailySalesResponse);
         }
