@@ -2,16 +2,16 @@ package manage.store.service.money.sales;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import manage.store.dto.money.month.BasicDailySales;
-import manage.store.dto.money.month.GetMonthSalesRequest;
-import manage.store.dto.money.month.GetMonthSalesResponse;
-import manage.store.dto.money.month.SalesDailySummary;
+import manage.store.dto.money.sales.month.*;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.RegistDate;
+import manage.store.model.common.value.WeekNumber;
+import manage.store.model.common.value.YearMonth;
 import manage.store.repository.money.SalesRepository;
 import manage.store.utils.DateUtils;
 import manage.store.model.money.sales.DailySales.StoreSales;
 import manage.store.model.money.sales.value.Money;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -31,25 +31,30 @@ public class SalesServiceImpl implements SalesService {
     private final SalesSummaryService salesSummaryService;
 
     @Override
-    public List<GetMonthSalesResponse.DailySales> getMonthSales(GetMonthSalesRequest request) {
+    public GetMonthSalesResponse getMonthSales(GetMonthSalesRequest request) {
         final String branchCd = request.getBranchCd();
         final int year = request.getYear();
         final int month = request.getMonth();
+        final YearMonth yearMonth = new YearMonth(year, month);
 
         if(!(StringUtils.hasText(branchCd) && DateUtils.isYearValid(year) && DateUtils.isMonthValid(month))) {
             throw new InvalidParameterException("Invalid parameters for getting monthly sales. Branch code: " + branchCd + ", Year: " + year + ", Month: " + month);
         }
 
-        // 기본 매출 및 통계 데이터 조회
-        final List<BasicDailySales> monthlyBasicSales = getBasicMonthSalesResponse(branchCd, year, month);
-        List<SalesDailySummary> monthlySalesSummary = new ArrayList<>();
-        try {monthlySalesSummary = salesSummaryService.getMonthSalesSummary(monthlyBasicSales);}
-        catch (Exception e) {
+        // 기본 매출 데이터 조회
+        final List<BasicDailySales> monthDailyBasicSales = getBasicMonthSalesResponse(branchCd, year, month);
+        GetMonthlySalesSummaryRslt monthlySalesSummary = null;
+        try {
+            // 매출 통계 데이터 조회
+            GetMonthlySalesSummaryParam param = new GetMonthlySalesSummaryParam(branchCd, yearMonth, monthDailyBasicSales);
+            monthlySalesSummary = salesSummaryService.getMonthSalesSummary(param);}
+        catch (AuthorizationDeniedException e) {
             log.info("권한 부족으로 인한 매출 통계 조회 실패");
         }
+
         // TODO 지출에 대한 통계 추가 필요
 
-        final List<GetMonthSalesResponse.DailySales> result = getMonthSalesResponse(monthlyBasicSales, monthlySalesSummary);
+        final GetMonthSalesResponse result = getMonthSalesResponse(branchCd, yearMonth, monthDailyBasicSales, monthlySalesSummary);
 
         return result;
     }
@@ -107,19 +112,47 @@ public class SalesServiceImpl implements SalesService {
     }
 
     /**
-     * 월별 기본 매출 데이터와 통계 데이터를 합친 response 객체를 생성
-     * @param monthBasicDailySales 월별 기초 매출 데이터
-     * @param monthSalesDailySummary 월별 매출 통계 데이터
-     * @return List<GetMonthSalesResponse.DailySales> 월별 매출 응답의 날짜별 통계 데이터가 설정된 통합 데이터 리스트
+     * 월별 매출 및 지출 응답 객체 생성
+     * @param branchCd 지점 코드
+     * @param yearMonth 년월
+     * @param monthBasicDailySales 월에 대한 일별 기본 매출
+     * @param monthSalesSummary 월에 대한 매출 통계 데이터
+     * @return GetMonthSalesResponse 월별 매출 응답 객체
      */
-    private List<GetMonthSalesResponse.DailySales> getMonthSalesResponse(List<BasicDailySales> monthBasicDailySales, List<SalesDailySummary> monthSalesDailySummary) {
-        List<GetMonthSalesResponse.DailySales> monthSalesResponse = new ArrayList<>(monthBasicDailySales.size());
+    private GetMonthSalesResponse getMonthSalesResponse(String branchCd, YearMonth yearMonth,
+                                                        List<BasicDailySales> monthBasicDailySales,
+                                                        GetMonthlySalesSummaryRslt monthSalesSummary) {
+        // 일별 매출 통합
+        List<GetMonthSalesResponse.DailySales> monthSalesDailyRes = getMonthSalesDailyResponse(monthBasicDailySales, monthSalesSummary.salesDailySummary());
+
+        // 주별 매출 통합
+        List<GetMonthSalesResponse.WeeklySales> monthSalesWeeklyRes = getMonthlySalesWeeklyResponse(monthSalesSummary.salesWeeklySummary());
+
+        GetMonthSalesResponse response = new GetMonthSalesResponse(
+                branchCd,
+                yearMonth,
+                monthSalesDailyRes,
+                monthSalesWeeklyRes,
+                monthSalesSummary.monthTotalCard(),
+                monthSalesSummary.monthTotalCash(),
+                monthSalesSummary.monthTotalSales()
+        );
+
+        return response;
+    }
+
+    /**
+     * 월에 대한 일별 기본 매출 및 지출 데이터와 통계 데이터를 합친 일별 통합 데이터를 생성
+     * @param monthBasicDailySales 월에 대한 일별 기본 매출
+     * @param monthSalesDailySummary 월에 대한 일별 통계 매출
+     * @return 기본과 통계 데이터가 합쳐진 일별 매출 / 지출 통합 데이터
+     */
+    private List<GetMonthSalesResponse.DailySales> getMonthSalesDailyResponse(List<BasicDailySales> monthBasicDailySales, List<SalesDailySummary> monthSalesDailySummary) {
+        List<GetMonthSalesResponse.DailySales> monthSalesDailyRes = new ArrayList<>(monthBasicDailySales.size());
         for (int i = 0; i < monthBasicDailySales.size(); i++) {
             BasicDailySales basicDailySales = monthBasicDailySales.get(i);
             // 기본 매출 데이터 설정
-            GetMonthSalesResponse.DailySales dailySalesResponse = new GetMonthSalesResponse.DailySales();
-            dailySalesResponse.setBranchCd(basicDailySales.getBranchCd());
-            dailySalesResponse.setRegistDate(basicDailySales.getRegistDate());
+            GetMonthSalesResponse.DailySales dailySalesResponse = new GetMonthSalesResponse.DailySales(basicDailySales.getBranchCd(), basicDailySales.getRegistDate());
             dailySalesResponse.setCardSales(basicDailySales.getCardSales());
             dailySalesResponse.setCashSales(basicDailySales.getCashSales());
             dailySalesResponse.setTotalSales(basicDailySales.getTotalSales());
@@ -133,10 +166,35 @@ public class SalesServiceImpl implements SalesService {
                 dailySalesResponse.setMonthTotalSales(salesDailySummary.getMonthTotalSales());
             }
 
-            monthSalesResponse.add(dailySalesResponse);
+            // TODO 지출 관련 통계 추가 필요
+
+            monthSalesDailyRes.add(dailySalesResponse);
         }
 
-        return monthSalesResponse;
+        return monthSalesDailyRes;
+    }
+
+    /**
+     * 월별 매출 및 지출에 대한 주간 통계 응답 객체를 생성
+     * @return List<GetMonthSalesResponse.WeeklySales> 월별 매출 및 지출에 대한 주간 통계 응답 리스트
+     */
+    private List<GetMonthSalesResponse.WeeklySales> getMonthlySalesWeeklyResponse(List<SalesWeeklySummary> monthSalesWeeklySummary) {
+        List<GetMonthSalesResponse.WeeklySales> monthSalesWeeklyRes = new ArrayList<>();
+        for (SalesWeeklySummary salesWeeklySummary : monthSalesWeeklySummary) {
+            String branchCd = salesWeeklySummary.getBranchCd();
+            YearMonth yearMonth = salesWeeklySummary.getYearMonth();
+            WeekNumber weekNumber = salesWeeklySummary.getWeekNumber();
+
+            GetMonthSalesResponse.WeeklySales weeklySales = new GetMonthSalesResponse.WeeklySales(branchCd, yearMonth, weekNumber);
+            weeklySales.setSalesAvg(salesWeeklySummary.getSalesAvg());
+            weeklySales.setExpectedTotalSales(salesWeeklySummary.getExpectedTotalSales());
+
+            // TODO 지출 관련 통계 추가 필요
+
+            monthSalesWeeklyRes.add(weeklySales);
+        }
+
+        return monthSalesWeeklyRes;
     }
 }
 

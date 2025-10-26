@@ -1,10 +1,10 @@
 package manage.store.service.money;
 
 import manage.store.consts.Tags;
-import manage.store.dto.money.month.GetMonthSalesRequest;
-import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.dto.money.sales.month.GetMonthSalesRequest;
+import manage.store.dto.money.sales.month.GetMonthSalesResponse;
 import manage.store.exception.common.InvalidParameterException;
-import manage.store.dto.money.month.SalesDailySummary;
+import manage.store.dto.money.sales.month.SalesDailySummary;
 import manage.store.model.common.value.RegistDate;
 import manage.store.model.money.sales.DailySales.StoreSales;
 import manage.store.model.money.sales.value.Money;

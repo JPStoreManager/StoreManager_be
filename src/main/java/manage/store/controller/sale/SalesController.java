@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import manage.store.controller.BaseController;
 import manage.store.dto.common.ApiResponse;
-import manage.store.dto.money.month.GetMonthSalesRequest;
-import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.dto.money.sales.month.GetMonthSalesRequest;
+import manage.store.dto.money.sales.month.GetMonthSalesResponse;
 import manage.store.service.money.sales.SalesService;
 import manage.store.utils.ApiPathUtils;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +30,9 @@ public class SalesController extends BaseController {
 
     @GetMapping(ApiPathUtils.ApiPath.Sales.SALES_MONTH)
     public ResponseEntity<ApiResponse<GetMonthSalesResponse>> getMonthlySales(@ModelAttribute @Valid GetMonthSalesRequest request) {
-        List<GetMonthSalesResponse.DailySales> dailySales = salesService.getMonthSales(request);
+        GetMonthSalesResponse monthSales = salesService.getMonthSales(request);
 
-        return ResponseEntity.ok(ApiResponse.success(new GetMonthSalesResponse(dailySales), "월 매출 조회 성공"));
+        return ResponseEntity.ok(ApiResponse.success(monthSales, "월 매출 조회 성공"));
     }
 
 //    @GetMapping(ApiPathUtils.ApiPath.Sales.SALES_YEAR)

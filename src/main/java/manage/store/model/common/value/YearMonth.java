@@ -8,26 +8,30 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 /**
- * YYYY-MM-DD 형식의 날짜 문자열을 나타내는 클래스
+ * YYYY-MM 형식의 날짜 문자열을 나타내는 클래스
  */
-public class RegistDate {
-    private static final String REGIST_DATE_PATTERN = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$";
+public class YearMonth {
+    private static final String REGIST_DATE_PATTERN = "^\\d{4}\\-(0[1-9]|1[012])$";
 
     private final String value;
 
-    public RegistDate(String value) {
-        if (!isValidRegistDate(value))
-            throw new InvalidParameterException("Registration date must be in the format YYYY-MM-DD. Provided: " + value);
+    /**
+     * YYYY-MM 형식의 날짜 문자열로 초기화
+     * @param value YYYY-MM 형식의 날짜 문자열
+     */
+    public YearMonth(String value) {
+        if (!isValidYearMonth(value))
+            throw new InvalidParameterException("YearMonth must be in the format YYYY-MM. Provided: " + value);
 
         this.value = value;
     }
 
-    public RegistDate(int year, int month, int day) {
-        String formattedRegistDateStr = String.format("%04d-%02d-%02d", year, month, day);
-        if(!isValidRegistDate(formattedRegistDateStr))
-            throw new InvalidParameterException("Registration date must be in the format YYYY-MM-DD. Provided: " + formattedRegistDateStr);
+    public YearMonth(int year, int month) {
+        String formattedYearMonth = String.format("%04d-%02d", year, month);
+        if(!isValidYearMonth(formattedYearMonth))
+            throw new InvalidParameterException("YearMonth must be in the format YYYY-MM. Provided: " + formattedYearMonth);
 
-        this.value = formattedRegistDateStr;
+        this.value = formattedYearMonth;
     }
 
     @JsonValue
@@ -45,7 +49,7 @@ public class RegistDate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RegistDate that = (RegistDate) o;
+        YearMonth that = (YearMonth) o;
 
         return this.value.equals(that.value);
     }
@@ -56,23 +60,24 @@ public class RegistDate {
     }
 
     /**
-     * RegistDate 객체를 LocalDate 객체로 변환하여 반환
+     * YearMonth 객체를 LocalDate 객체로 변환하여 반환
+     * 날짜는 1일로 설정
      * @return LocalDate 객체
      */
     public LocalDate convertToLocalDate() {
         String[] comps = this.value.split("-");
         int year = Integer.parseInt(comps[0]);
         int month = Integer.parseInt(comps[1]);
-        int day = Integer.parseInt(comps[2]);
+        int day = 1;
 
         return LocalDate.of(year, month, day);
     }
 
-    private boolean isValidRegistDate(String value) {
+    private boolean isValidYearMonth(String value) {
         if (value == null || !value.matches(REGIST_DATE_PATTERN)) return false;
         try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            dateFormat.setLenient(false);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+            dateFormat.setLenient(false); // 명확하게 YYYY-MM인지 확인
             dateFormat.parse(value);
 
             return true;
@@ -81,3 +86,4 @@ public class RegistDate {
         }
     }
 }
+

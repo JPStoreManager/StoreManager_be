@@ -16,7 +16,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SalesAccessPolicy implements RolePolicy {
 
-    static final UserAuthCode[] ALLOWED_AUTH_CODES = {
+    private static final UserAuthCode[] ALLOWED_AUTH_CODES = {
         UserAuthCode.ROLE_ADMIN,
         UserAuthCode.ROLE_OWNER,
     };
