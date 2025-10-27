@@ -2,7 +2,9 @@ package manage.store.service.money.sales;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import manage.store.dto.money.sales.month.*;
+import manage.store.dto.money.sales.month.controller.GetMonthSalesRequest;
+import manage.store.dto.money.sales.month.controller.GetMonthSalesResponse;
+import manage.store.dto.money.sales.month.service.*;
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.RegistDate;
 import manage.store.model.common.value.WeekNumber;
@@ -31,18 +33,16 @@ public class SalesServiceImpl implements SalesService {
     private final SalesSummaryService salesSummaryService;
 
     @Override
-    public GetMonthSalesResponse getMonthSales(GetMonthSalesRequest request) {
-        final String branchCd = request.getBranchCd();
-        final int year = request.getYear();
-        final int month = request.getMonth();
-        final YearMonth yearMonth = new YearMonth(year, month);
-
-        if(!(StringUtils.hasText(branchCd) && DateUtils.isYearValid(year) && DateUtils.isMonthValid(month))) {
-            throw new InvalidParameterException("Invalid parameters for getting monthly sales. Branch code: " + branchCd + ", Year: " + year + ", Month: " + month);
+    public GetMonthSalesResponse getMonthSales(GetMonthlySalesParam request) {
+        if(request == null) {
+            throw new InvalidParameterException("Invalid parameters for getting monthly sales. param: " + request);
         }
 
+        final String branchCd = request.branchCd();
+        final YearMonth yearMonth = request.yearMonth();
+
         // 기본 매출 데이터 조회
-        final List<BasicDailySales> monthDailyBasicSales = getBasicMonthSalesResponse(branchCd, year, month);
+        final List<BasicDailySales> monthDailyBasicSales = getBasicMonthSalesResponse(branchCd, yearMonth.getYear(), yearMonth.getMonth());
         GetMonthlySalesSummaryRslt monthlySalesSummary = null;
         try {
             // 매출 통계 데이터 조회

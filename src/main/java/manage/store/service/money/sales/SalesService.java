@@ -1,11 +1,9 @@
 package manage.store.service.money.sales;
 
 
-import manage.store.dto.money.sales.month.GetMonthSalesRequest;
-import manage.store.dto.money.sales.month.GetMonthSalesResponse;
+import manage.store.dto.money.sales.month.controller.GetMonthSalesResponse;
+import manage.store.dto.money.sales.month.service.GetMonthlySalesParam;
 import manage.store.exception.common.InvalidParameterException;
-
-import java.util.List;
 
 public interface SalesService {
 
@@ -16,6 +14,6 @@ public interface SalesService {
      * @return 월별 매출
      * @throws InvalidParameterException 인자가 유효하지 않을 때
      */
-     GetMonthSalesResponse getMonthSales(GetMonthSalesRequest request);
+     GetMonthSalesResponse getMonthSales(GetMonthlySalesParam request);
 
 }

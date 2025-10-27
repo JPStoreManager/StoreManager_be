@@ -3,8 +3,8 @@ package manage.store.model.common.value;
 import com.fasterxml.jackson.annotation.JsonValue;
 import manage.store.exception.common.InvalidParameterException;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.WeekFields;
 
 public class WeekNumber {
 
@@ -22,9 +22,7 @@ public class WeekNumber {
     public WeekNumber(LocalDate date) {
         if(date == null) throw new InvalidParameterException("Date cannot be null when determining week number.");
 
-        // ISO 기준: 한 주의 시작을 월요일로 간주
-        // WeekFields.of(Locale.KOREA): 한 주의 시작을 일요일로 간주
-        int weekNumber = date.get(WeekFields.ISO.weekOfMonth());
+        int weekNumber = getWeekNumberAtMonth(date);
         if(!isValid(weekNumber)) throw new InvalidParameterException(getErrorMsg(value));
 
         this.value = weekNumber;
@@ -60,6 +58,29 @@ public class WeekNumber {
 
     private String getErrorMsg(int weekNumber) {
         return "Invalid week number: " + weekNumber + ". It must be between " + MIN_WEEK_NUMBER + " and " + MAX_WEEK_NUMBER + ".";
+    }
+
+    /**
+     * 날짜가 월의 몇 번쨰 주차에 헤당하는지 반환
+     * @param date 주차를 알아낼 지정한 날짜
+     * @return 주차
+     */
+    private int getWeekNumberAtMonth(LocalDate date) {
+        int lengthOfMonth = date.lengthOfMonth();
+        int year = date.getYear(), month = date.getMonthValue();
+        DayOfWeek dayOfWeekAtFirstDayOfMonth = LocalDate.of(year, month, 1).getDayOfWeek();
+
+        int weekNumber = dayOfWeekAtFirstDayOfMonth == DayOfWeek.MONDAY ? 0 : 1;
+        for (int day = 1; day <= lengthOfMonth; day++) {
+            LocalDate curDate = LocalDate.of(year, month, day);
+            DayOfWeek curDayOfWeek = curDate.getDayOfWeek();
+            // 월요일이면 새로운 주의 시작임으로 하나 증가
+            if(curDayOfWeek == DayOfWeek.MONDAY) weekNumber++;
+
+            if(day == date.getDayOfMonth()) break;
+        }
+
+        return (weekNumber);
     }
     
 }

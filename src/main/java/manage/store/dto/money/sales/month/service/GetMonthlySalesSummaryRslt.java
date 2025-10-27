@@ -1,4 +1,4 @@
-package manage.store.dto.money.sales.month;
+package manage.store.dto.money.sales.month.service;
 
 import manage.store.exception.common.InvalidParameterException;
 import manage.store.model.common.value.YearMonth;

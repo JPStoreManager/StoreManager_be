@@ -73,6 +73,14 @@ public class YearMonth {
         return LocalDate.of(year, month, day);
     }
 
+    public int getYear() {
+        return convertToLocalDate().getYear();
+    }
+
+    public int getMonth() {
+        return convertToLocalDate().getMonthValue();
+    }
+
     private boolean isValidYearMonth(String value) {
         if (value == null || !value.matches(REGIST_DATE_PATTERN)) return false;
         try{

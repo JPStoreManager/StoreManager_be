@@ -1,7 +1,7 @@
 package manage.store.service.money.sales;
 
-import manage.store.dto.money.sales.month.GetMonthlySalesSummaryParam;
-import manage.store.dto.money.sales.month.GetMonthlySalesSummaryRslt;
+import manage.store.dto.money.sales.month.service.GetMonthlySalesSummaryParam;
+import manage.store.dto.money.sales.month.service.GetMonthlySalesSummaryRslt;
 import manage.store.exception.common.InvalidParameterException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authorization.AuthorizationDeniedException;

@@ -1,4 +1,4 @@
-package manage.store.dto.money.sales.month;
+package manage.store.dto.money.sales.month.controller;
 
 import lombok.*;
 import manage.store.model.common.value.RegistDate;
