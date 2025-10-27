@@ -106,8 +106,14 @@ public class SalesSummaryServiceImpl implements SalesSummaryService {
 
             // 주간 평균 일 매출 계산
             // 1) 월요일부터 현재까지 몇 일 지났는지 일 수 계산
+            LocalDate now = LocalDate.now();
             DayOfWeek curDayOfWeek = registDate.getDayOfWeek();
             int curDayPassedAtWeekCnt = curDayOfWeek.getValue();
+            // 특정 매출 주 데이터에서 오늘 날짜가 아직 일요일까지 완성되지 않았을 경우 오늘 날짜에 대한 지난 일수를 사용
+            // (매출이 발생한 날짜에 대한 집계를 하기 위함)
+            if(DateUtils.isOnSameWeek(now, registDate) && registDate.isAfter(now)) {
+                curDayPassedAtWeekCnt = now.getDayOfWeek().getValue();
+            }
 
             // 2) 주간 총 매출 / 매출이 발생한 날짜 수를 통해 주간 평균 일 매출 계산
             Money weeklyAvgSales = new Money(curWeekSalesTotal.value() / curDayPassedAtWeekCnt);
@@ -117,6 +123,13 @@ public class SalesSummaryServiceImpl implements SalesSummaryService {
 
             // 2) (주간 총 매출 / 날짜 수) * 7일을 통해 주간 예측 매출 계산
             Money expectedTotalSales = new Money(weeklyAvgSales.value() * 7);
+
+            // 현재 계산중인 날짜가 일요일이거나 마지막 날이고 오늘 이전(이하)의 날이면 실제 주간 총 매출을 사용
+            // 아직 오늘이 일주일이 채워지기 전이라면 예측 데이터를 써야하고, 그 외 경우에는 모든 실제 매출 데이터를 사용
+            if(!DateUtils.isOnSameWeek(now, registDate) &&
+                    (curDayOfWeek == DayOfWeek.SUNDAY || registDate.getDayOfMonth() == registDate.lengthOfMonth())) {
+                expectedTotalSales = new Money(curWeekSalesTotal.value());
+            }
 
             // 주간 통계 업데이트
             int idx = weekNumber.value() - 1;

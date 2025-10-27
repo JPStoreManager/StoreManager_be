@@ -53,19 +53,19 @@ public class StoreSalesServiceImplTest {
         final int year = MonthlySalesUtils.YEAR_MONTH.getYear(), month = MonthlySalesUtils.YEAR_MONTH.getMonth();
         final GetMonthSalesRequest param = new GetMonthSalesRequest(branchCd, year, month);
 
-        final List<StoreSales> sampleStoreSales = MonthlySalesUtils.STORE_SALES_2023_05;
+        final List<StoreSales> sampleStoreSales = MonthlySalesUtils.STORE_SALES_2023_05();
         given(salesRepository.selectSalesByMonth(branchCd, year, month)).willReturn(sampleStoreSales);
 
-        final List<SalesDailySummary> salesDailySummary = MonthlySalesUtils.EXPECTED_DAILY_SUMMARY;
-        final List<SalesWeeklySummary> salesWeeklySummary = MonthlySalesUtils.EXPECTED_WEEKLY_SUMMARY;
+        final List<SalesDailySummary> salesDailySummary = MonthlySalesUtils.EXPECTED_DAILY_SUMMARY();
+        final List<SalesWeeklySummary> salesWeeklySummary = MonthlySalesUtils.EXPECTED_WEEKLY_SUMMARY();
         final GetMonthlySalesSummaryRslt summaryRslt = new GetMonthlySalesSummaryRslt(
                 branchCd,
                 new YearMonth(year, month),
                 salesDailySummary,
                 salesWeeklySummary,
-                MonthlySalesUtils.MONTH_TOTAL_CARD,
-                MonthlySalesUtils.MONTH_TOTAL_CASH,
-                MonthlySalesUtils.MONTH_TOTAL_CARD.add(MonthlySalesUtils.MONTH_TOTAL_CASH)
+                MonthlySalesUtils.MONTH_TOTAL_CARD(),
+                MonthlySalesUtils.MONTH_TOTAL_CASH(),
+                MonthlySalesUtils.MONTH_TOTAL_CARD().add(MonthlySalesUtils.MONTH_TOTAL_CASH())
         );
         given(salesSummaryService.getMonthSalesSummary(any())).willReturn(summaryRslt);
 
@@ -86,7 +86,7 @@ public class StoreSalesServiceImplTest {
         for (int i = 0; i < result.getDailySales().size(); i++) {
             GetMonthSalesResponse.DailySales actual = result.getDailySales().get(i);
             SalesDailySummary expectedSummary = salesDailySummary.get(i);
-            BasicDailySales expectedBasicSales = MonthlySalesUtils.BASIC_DAILY_SALES_2023_05.get(i);
+            BasicDailySales expectedBasicSales = MonthlySalesUtils.BASIC_DAILY_SALES_2023_05().get(i);
 
             Assertions.assertThat(actual.getBranchCd()).isEqualTo(expectedBasicSales.getBranchCd());
             Assertions.assertThat(actual.getRegistDate()).isEqualTo(expectedBasicSales.getRegistDate());
@@ -116,9 +116,9 @@ public class StoreSalesServiceImplTest {
         }
 
         // 월 총
-        Assertions.assertThat(result.getMonthTotalCard()).isEqualTo(MonthlySalesUtils.MONTH_TOTAL_CARD);
-        Assertions.assertThat(result.getMonthTotalCash()).isEqualTo(MonthlySalesUtils.MONTH_TOTAL_CASH);
-        Assertions.assertThat(result.getMonthTotalSales()).isEqualTo(MonthlySalesUtils.MONTH_TOTAL_CARD.add(MonthlySalesUtils.MONTH_TOTAL_CASH));
+        Assertions.assertThat(result.getMonthTotalCard()).isEqualTo(MonthlySalesUtils.MONTH_TOTAL_CARD());
+        Assertions.assertThat(result.getMonthTotalCash()).isEqualTo(MonthlySalesUtils.MONTH_TOTAL_CASH());
+        Assertions.assertThat(result.getMonthTotalSales()).isEqualTo(MonthlySalesUtils.MONTH_TOTAL_CARD().add(MonthlySalesUtils.MONTH_TOTAL_CASH()));
 
     }
 
