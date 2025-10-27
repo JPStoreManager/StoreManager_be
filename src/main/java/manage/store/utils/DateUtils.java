@@ -7,6 +7,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.WeekFields;
 
 public class DateUtils {
 
@@ -42,6 +43,24 @@ public class DateUtils {
         }catch (DateTimeParseException e) {
             throw new InvalidParameterException("Invalid date format. Please use 'yyyy-MM-dd'. parameter: " + date);
         }
+    }
+
+    /**
+     * 동일한 주에 포함되는 여부 반환
+     * @param date1 날짜1
+     * @param date2 날짜2
+     * @return 동일년도의 동일주에 포함되면 true, 그 외 false
+     */
+    public static boolean isOnSameWeek(LocalDate date1, LocalDate date2) {
+        WeekFields weekFields = WeekFields.ISO;
+
+        int year1 = date1.get(weekFields.weekBasedYear());
+        int week1 = date1.get(weekFields.weekOfYear());
+
+        int year2 = date2.get(weekFields.weekBasedYear());
+        int week2 = date2.get(weekFields.weekOfYear());
+
+        return (year1 == year2) && (week1 == week2);
     }
 
     /**
