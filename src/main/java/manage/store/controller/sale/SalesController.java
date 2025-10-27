@@ -4,16 +4,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import manage.store.controller.BaseController;
 import manage.store.dto.common.ApiResponse;
-import manage.store.dto.money.month.GetMonthSalesRequest;
-import manage.store.dto.money.month.GetMonthSalesResponse;
+import manage.store.dto.money.sales.month.controller.GetMonthSalesRequest;
+import manage.store.dto.money.sales.month.controller.GetMonthSalesResponse;
+import manage.store.dto.money.sales.month.service.GetMonthlySalesParam;
+import manage.store.model.common.value.YearMonth;
 import manage.store.service.money.sales.SalesService;
 import manage.store.utils.ApiPathUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,9 +30,10 @@ public class SalesController extends BaseController {
 
     @GetMapping(ApiPathUtils.ApiPath.Sales.SALES_MONTH)
     public ResponseEntity<ApiResponse<GetMonthSalesResponse>> getMonthlySales(@ModelAttribute @Valid GetMonthSalesRequest request) {
-        List<GetMonthSalesResponse.DailySales> dailySales = salesService.getMonthSales(request);
+        final GetMonthlySalesParam param = new GetMonthlySalesParam(request.getBranchCd(), new YearMonth(request.getYear(), request.getMonth()));
+        GetMonthSalesResponse monthSales = salesService.getMonthSales(param);
 
-        return ResponseEntity.ok(ApiResponse.success(new GetMonthSalesResponse(dailySales), "월 매출 조회 성공"));
+        return ResponseEntity.ok(ApiResponse.success(monthSales, "월 매출 조회 성공"));
     }
 
 //    @GetMapping(ApiPathUtils.ApiPath.Sales.SALES_YEAR)

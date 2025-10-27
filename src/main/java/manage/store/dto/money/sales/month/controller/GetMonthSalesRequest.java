@@ -1,4 +1,4 @@
-package manage.store.dto.money.month;
+package manage.store.dto.money.sales.month.controller;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

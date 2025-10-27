@@ -1,4 +1,4 @@
-package manage.store.dto.money.month;
+package manage.store.dto.money.sales.month.service;
 
 import lombok.Getter;
 import lombok.ToString;

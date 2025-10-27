@@ -8,6 +8,7 @@ import manage.store.model.money.sales.value.Money;
 import manage.store.model.user.value.UserId;
 
 import java.text.SimpleDateFormat;
+
 @Data
 public class StoreSales {
 

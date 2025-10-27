@@ -40,7 +40,8 @@
             this.value = value;
         }
     
-        public String value() {
+        @JsonValue -- json으로 응답값이 포함되어야 하는 경우
+        public {ValueType} value() {
             return value;
         }
     
