@@ -39,7 +39,7 @@ email:
   title-prefix: "[JumpingParkManager]"
 
 cors:
-  allow-ip: "http://localhost:3000,http://api.storemanager.biztechi.biz"
+  allow-ip: "http://localhost:3000,http://api.storemanager.biztechi.biz, http://storemanager.biztechi.biz"
 
 ---
 spring :
