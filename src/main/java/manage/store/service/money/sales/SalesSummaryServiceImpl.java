@@ -106,7 +106,7 @@ public class SalesSummaryServiceImpl implements SalesSummaryService {
 
             // 주간 평균 일 매출 계산
             // 1) 월요일부터 현재까지 몇 일 지났는지 일 수 계산
-            LocalDate now = LocalDate.now();
+            LocalDate now = DateUtils.nowDate();
             DayOfWeek curDayOfWeek = registDate.getDayOfWeek();
             int curDayPassedAtWeekCnt = curDayOfWeek.getValue();
             // 특정 매출 주 데이터에서 오늘 날짜가 아직 일요일까지 완성되지 않았을 경우 오늘 날짜에 대한 지난 일수를 사용
