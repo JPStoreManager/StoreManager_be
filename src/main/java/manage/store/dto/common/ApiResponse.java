@@ -1,5 +1,6 @@
 package manage.store.dto.common;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,9 +13,10 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
-    private SuccessFlag result;
-    private String msg;
-    private LocalDateTime timestamp;
+    private final SuccessFlag result;
+    private final String msg;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime timestamp;
     private T data;
 
     private ApiResponse(SuccessFlag successFlag, String msg, T data) {

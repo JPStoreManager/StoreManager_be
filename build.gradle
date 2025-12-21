@@ -78,6 +78,9 @@ dependencies {
     implementation 'com.google.guava:guava:33.3.1-jre'
     implementation 'com.google.code.gson:gson:2.11.0'
 
+    // objectmapper
+    implementation 'tools.jackson.datatype:jackson-datatype-jsr310:3.0.0-rc2'
+
     // mapstruct
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 

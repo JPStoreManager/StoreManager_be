@@ -2,11 +2,13 @@ package manage.store.config.auth;
 
 import lombok.RequiredArgsConstructor;
 import manage.store.config.auth.login.LoginReqAuthFilter;
+import manage.store.config.auth.login.TokenAuthenticationFilter;
 import manage.store.config.auth.login.response.fail.AccessDeniedByLackAuthHandler;
 import manage.store.config.auth.login.response.fail.LoginFailureHandler;
 import manage.store.config.auth.login.response.fail.NotAuthorizedEntryPoint;
 import manage.store.config.auth.login.response.success.LoginSuccessHandler;
 import manage.store.config.auth.login.user.LoginUserDetailsServiceImpl;
+import manage.store.service.user.auth.JwtService;
 import manage.store.utils.ApiPathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,10 +17,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -43,6 +45,10 @@ public class SecurityConfiguration {
 
     private final LoginUserDetailsServiceImpl loginUserDetailsService;
 
+    private final JwtService jwtService;
+
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -50,7 +56,7 @@ public class SecurityConfiguration {
 
     @Bean
     public LoginSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler();
+        return new LoginSuccessHandler(jwtService);
     }
 
     @Bean
@@ -83,6 +89,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 // CORS 설정은 WebConfiguration 설정 클래스와 연동
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // JWT를 활용한 인증을 함으로 세션에 로그인 정보 저장 X
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
 
                 // 인증/인가 매핑
                 .authorizeHttpRequests(auth -> auth
@@ -100,6 +110,7 @@ public class SecurityConfiguration {
 //                        ))
 //                        .requireExplicitSave(false)
 //                )
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(loginReqAuthFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(a -> a

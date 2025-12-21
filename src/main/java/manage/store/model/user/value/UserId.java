@@ -7,7 +7,7 @@ public class UserId {
 
     private static final int MAX_USER_ID_LENGTH = 100;
 
-    private String id;
+    private final String id;
 
     public UserId(String userId) {
         if(userId == null || userId.length() > MAX_USER_ID_LENGTH)

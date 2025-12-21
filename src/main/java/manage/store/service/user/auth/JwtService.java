@@ -9,12 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import manage.store.consts.Env;
 import manage.store.exception.common.auth.InvalidTokenException;
 import manage.store.model.user.userAuth.LoginUserJwtClaim;
+import manage.store.model.user.value.UserId;
 import manage.store.utils.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -41,8 +40,8 @@ public class JwtService {
     }
 
     // 토큰 생성
-    public String create(String userId) {
-        if(!StringUtils.hasText(userId)) throw new InvalidTokenException("userId must not be empty");
+    public String create(UserId userId) {
+        if(userId == null) throw new InvalidTokenException("userId must not be empty");
 
         Header header = createHeader();
         SecretKey secretKey = getSecretKey(SECRET_KEY);
@@ -52,7 +51,7 @@ public class JwtService {
                 .header().add(header)
                 .and()
                 // payload
-                .claims().add(CUSTOM_CLAIM_KEY, createClaim(userId))
+                .claims().add(CUSTOM_CLAIM_KEY, createClaim(userId.value()))
                 .expiration(getExpirationDate(VALID_SEC))
                 .issuer(ISSUER)
                 .and()
