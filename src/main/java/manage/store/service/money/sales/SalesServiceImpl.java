@@ -50,6 +50,10 @@ public class SalesServiceImpl implements SalesService {
             monthlySalesSummary = salesSummaryService.getMonthSalesSummary(param);}
         catch (AuthorizationDeniedException e) {
             log.info("권한 부족으로 인한 매출 통계 조회 실패");
+            monthlySalesSummary = new GetMonthlySalesSummaryRslt(branchCd, yearMonth,
+                    new ArrayList<>(), new ArrayList<>(),
+                    new Money(0L), new Money(0L), new Money(0L)
+            );
         }
 
         // TODO 지출에 대한 통계 추가 필요
