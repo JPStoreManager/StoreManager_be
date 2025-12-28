@@ -63,7 +63,7 @@ jobs:
                 --secret id=db_password,env=DB_PASSWORD \
                 --secret id=google_email,env=GOOGLE_EMAIL \
                 --secret id=google_app_pw,env=GOOGLE_APP_PW \
-                --secret id=jwt_secret_key,env=JWT_SECRET_KEY
+                --secret id=jwt_secret_key,env=JWT_SECRET_KEY \
                 --platform linux/amd64 \
                 -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }} .
 
