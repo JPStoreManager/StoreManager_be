@@ -15,8 +15,13 @@ public record GetMonthlySalesSummaryRslt(String branchCd, YearMonth yearMonth,
                                          Money monthTotalCard, Money monthTotalCash, Money monthTotalSales) {
 
     public GetMonthlySalesSummaryRslt {
-        if (!StringUtils.hasText(branchCd) || yearMonth == null) {
-            throw new InvalidParameterException("Invalid parameters for GetMonthlySalesSummaryRslt. Branch code: " + branchCd + ", YearMonth: " + yearMonth);
+        if (!StringUtils.hasText(branchCd) || yearMonth == null ||
+            salesDailySummary == null || salesWeeklySummary == null ||
+            monthTotalCard == null || monthTotalCash == null || monthTotalSales == null
+        ) {
+            throw new InvalidParameterException("Invalid parameters for GetMonthlySalesSummaryRslt. Branch code: " + branchCd + ", YearMonth: " + yearMonth +
+                    ", DailySummary: " + salesDailySummary + ", WeeklySummary: " + salesWeeklySummary +
+                    ", MonthTotalCard: " + monthTotalCard + ", MonthTotalCash: " + monthTotalCash + ", MonthTotalSales: " + monthTotalSales);
         }
     }
 
