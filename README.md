@@ -8,6 +8,7 @@ Store manager backend Server
   - `DB_PASSWORD`: 데이터베이스 비밀번호
   - `GOOGLE_EMAIL`: 구글 이메일 주소
   - `GOOGLE_APP_PW`: 구글 앱 비밀번호
+  - `JWT_SECRET_KEY`: JWT 인증키
 
 # Source Management
 ## How to push to ECR
@@ -59,3 +60,8 @@ docker run \
        -e GOOGLE_APP_PW="$GOOGLE_APP_PW" \
        store-manager:local
 ```
+
+## Reference
+- 환경 변수의 수정이 이루어지면 아래 2가지 포인트 수정이 필요하다.
+    1. Github Action의 CICD 로직 (.yml 파일)
+    2. Github Action 사이트의 비밀변수 설정
