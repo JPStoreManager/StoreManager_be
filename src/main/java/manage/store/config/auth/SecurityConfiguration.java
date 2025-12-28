@@ -9,6 +9,7 @@ import manage.store.config.auth.login.response.fail.NotAuthorizedEntryPoint;
 import manage.store.config.auth.login.response.success.LoginSuccessHandler;
 import manage.store.config.auth.login.user.LoginUserDetailsServiceImpl;
 import manage.store.service.user.auth.JwtService;
+import manage.store.service.user.auth.UserAuthService;
 import manage.store.utils.ApiPathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,8 +48,6 @@ public class SecurityConfiguration {
 
     private final JwtService jwtService;
 
-    private final TokenAuthenticationFilter tokenAuthenticationFilter;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -71,7 +70,7 @@ public class SecurityConfiguration {
 
     @Bean
     @Autowired
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserAuthService userAuthService) throws Exception {
 
         final String[] NOT_NEED_AUTH_APIS = {
                 ApiPathUtils.ApiPath.User.LOGIN,
@@ -79,6 +78,8 @@ public class SecurityConfiguration {
                 ApiPathUtils.ApiPath.User.FindPassword.VALIDATE_OTP,
                 ApiPathUtils.ApiPath.User.FindPassword.UPDATE_PW,
         };
+
+        final TokenAuthenticationFilter tokenAuthenticationFilter = new TokenAuthenticationFilter(jwtService, loginUserDetailsService, userAuthService);
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(loginAuthenticationProvider);

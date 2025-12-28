@@ -24,7 +24,6 @@ import java.io.IOException;
  * 로그인 이후의 요청에 대해 JWT 토큰을 검증하고
  * SecurityContext에 인증 정보를 설정하는 필터
  */
-@Component
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
