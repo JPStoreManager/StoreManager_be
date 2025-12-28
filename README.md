@@ -65,3 +65,4 @@ docker run \
 - 환경 변수의 수정이 이루어지면 아래 2가지 포인트 수정이 필요하다.
     1. Github Action의 CICD 로직 (.yml 파일)
     2. Github Action 사이트의 비밀변수 설정
+    3. Dockerfile 내의 ARG 설정
