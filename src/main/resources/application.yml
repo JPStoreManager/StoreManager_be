@@ -1,3 +1,4 @@
+# ⚠️환경 변수 추가 시 반드시 cicd 로직에도 추가해줄 것
 spring:
   application:
     name: storeManager
@@ -39,7 +40,12 @@ email:
   title-prefix: "[JumpingParkManager]"
 
 cors:
-  allow-ip: "http://localhost:3000,http://api.storemanager.biztechi.biz, http://storemanager.biztechi.biz"
+  allow-ip: "http://localhost:3000,http://api.storemanager.biztechi.biz,http://storemanager.biztechi.biz"
+
+secret:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+    valid-sec: 3600
 
 ---
 spring :

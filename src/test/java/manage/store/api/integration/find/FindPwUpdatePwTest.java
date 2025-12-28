@@ -1,5 +1,7 @@
 package manage.store.api.integration.find;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import manage.store.StoreManagerApplication;
 import manage.store.dto.common.ApiResponse;
@@ -14,6 +16,7 @@ import manage.store.consts.Profiles;
 import manage.store.consts.Tags;
 import manage.store.api.integration.BaseIntegration;
 import manage.store.utils.GsonUtils;
+import manage.store.utils.ObjectMapperUtils;
 import manage.store.utils.SecretUtils;
 import manage.store.testUtils.user.UserData;
 import org.junit.jupiter.api.*;
@@ -30,7 +33,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 
@@ -90,14 +92,16 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         sendOtpRequest.setUserId(user.getId().value());
         sendOtpRequest.setEmail(user.getEmail().value());
 
-        final Gson gson = GsonUtils.getGson();
+        final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
         MvcResult sendOtpResult = mock.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(sendOtpRequest)))
+                        .content(objectMapper.writeValueAsString(sendOtpRequest)))
                 .andReturn();
 
-        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
-        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = objectMapper.readValue(
+                sendOtpResult.getResponse().getContentAsString(),
+                new TypeReference<ApiResponse<FindPwSendOtpResponse>>() {}
+        );
 
         // 2) validateOtp
         // Skip 가능
@@ -118,7 +122,7 @@ public class FindPwUpdatePwTest extends BaseIntegration {
                         .session(session)
                         .header("JP_FPW_ID", sendOtpSessionId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(updatePwRequest)))
+                        .content(objectMapper.writeValueAsString(updatePwRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("Y"));
 
@@ -138,14 +142,16 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         sendOtpRequest.setUserId(user.getId().value());
         sendOtpRequest.setEmail(user.getEmail().value());
 
-        final Gson gson = GsonUtils.getGson();
+        final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
         MvcResult sendOtpResult = mock.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(sendOtpRequest)))
+                        .content(objectMapper.writeValueAsString(sendOtpRequest)))
                 .andReturn();
 
-        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
-        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = objectMapper.readValue(
+                sendOtpResult.getResponse().getContentAsString(),
+                new TypeReference<ApiResponse<FindPwSendOtpResponse>>() {}
+        );
         final String sendOtpSessionId = sendOtpResponse.getData().getSessionId();
 
         final String[][] params = {
@@ -180,7 +186,7 @@ public class FindPwUpdatePwTest extends BaseIntegration {
             mock.perform(put(UPDATE_PW_PATH)
                     .header("JP_FPW_ID", sendOtpSessionId)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(gson.toJson(request)))
+                    .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.result").value("N"));
         }
@@ -196,10 +202,10 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         request.setNewPassword("1q2w3e4r");
 
         // When
-        Gson gson = GsonUtils.getGson();
+        ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
         mock.perform(put(UPDATE_PW_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(request)))
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value("N"));
     }
@@ -213,15 +219,17 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         sendOtpRequest.setUserId(user.getId().value());
         sendOtpRequest.setEmail(user.getEmail().value());
 
-        final Gson gson = GsonUtils.getGson();
+        final ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
         MvcResult sendOtpResult = mock.perform(post(SEND_OTP_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(sendOtpRequest)))
+                        .content(objectMapper.writeValueAsString(sendOtpRequest)))
                 .andReturn();
 
         // 2) updatePw
-        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
-        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = objectMapper.readValue(
+                sendOtpResult.getResponse().getContentAsString(),
+                new TypeReference<ApiResponse<FindPwSendOtpResponse>>() {}
+        );
         final String sendOtpSessionId = sendOtpResponse.getData().getSessionId();
 
         final FindPwUpdatePwRequest request = new FindPwUpdatePwRequest();
@@ -233,7 +241,7 @@ public class FindPwUpdatePwTest extends BaseIntegration {
         mock.perform(put(UPDATE_PW_PATH)
                 .header("JP_FPW_ID", sendOtpSessionId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(request)))
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value("N"));
     }

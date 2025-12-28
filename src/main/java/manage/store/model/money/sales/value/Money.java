@@ -5,7 +5,7 @@ import manage.store.exception.common.InvalidParameterException;
 
 public class Money {
 
-    private Long amount;
+    private final Long amount;
 
     public Money(Long amount) {
         if (amount == null || amount < 0) throw new InvalidParameterException("Amount must be a non-negative value.");

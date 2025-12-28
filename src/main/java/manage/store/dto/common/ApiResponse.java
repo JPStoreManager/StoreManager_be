@@ -1,6 +1,9 @@
 package manage.store.dto.common;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 import manage.store.model.common.value.SuccessFlag;
@@ -12,23 +15,37 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
-    private SuccessFlag result;
-    private String msg;
-    private LocalDateTime timestamp;
+    private final SuccessFlag result;
+    private final String msg;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime timestamp;
     private T data;
 
-    private ApiResponse(SuccessFlag successFlag, String msg, T data) {
-        this.result = successFlag;
+    @JsonCreator
+    // For Test
+    private ApiResponse(
+            @JsonProperty("result") SuccessFlag result,
+            @JsonProperty("msg") String msg,
+            @JsonProperty("data") T data,
+            @JsonProperty("timestamp") LocalDateTime timestamp
+    ) {
+        this.result = result;
+        this.data = data;
+        this.msg = msg;
+        this.timestamp = timestamp;
+    }
+
+    private ApiResponse(
+            @JsonProperty("result") SuccessFlag result,
+            @JsonProperty("msg") String msg,
+            @JsonProperty("data") T data
+    ) {
+        this.result = result;
         this.data = data;
         this.msg = msg;
         this.timestamp = LocalDateTime.now();
     }
 
-    private ApiResponse(SuccessFlag successFlag, String msg) {
-        this.result = successFlag;
-        this.msg = msg;
-        this.timestamp = LocalDateTime.now();
-    }
 
     /**
      * Api 성공에 대한 응답 생성
@@ -46,8 +63,8 @@ public class ApiResponse<T> {
      * @param msg 응답 메시지. nullable
      * @return ApiResponse<T> 성공 응답
      */
-    public static ApiResponse success(String msg) {
-        return new ApiResponse(SuccessFlag.Y, msg, null);
+    public static <T> ApiResponse<T> success(String msg) {
+        return new ApiResponse<T>(SuccessFlag.Y, msg, null);
     }
 
     /**
@@ -55,8 +72,8 @@ public class ApiResponse<T> {
      * @param msg 응답 메시지. nullable
      * @return ApiResponse<T> 실패 응답
      */
-    public static ApiResponse fail(String msg) {
-        return new ApiResponse(SuccessFlag.N, msg);
+    public static <T> ApiResponse<T> fail(String msg) {
+        return new ApiResponse<T>(SuccessFlag.N, msg, null);
     }
 
 }

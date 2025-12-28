@@ -1,5 +1,7 @@
 package manage.store.api.integration.find;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import manage.store.StoreManagerApplication;
 import manage.store.dto.common.ApiResponse;
@@ -13,6 +15,7 @@ import manage.store.consts.Tags;
 import manage.store.api.integration.BaseIntegration;
 import manage.store.testUtils.user.UserData;
 import manage.store.utils.GsonUtils;
+import manage.store.utils.ObjectMapperUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,13 +90,15 @@ public class FindPwValidateOtpTest extends BaseIntegration {
         sendOtpRequest.setEmail(user.getEmail().value());
 
         // 1차로 otp 전송 단계로 통과 검증을 위한 세션 발급받기
-        Gson gson = GsonUtils.getGson();
+        ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
         MvcResult sendOtpResult = mockMvc.perform(post(SEND_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(sendOtpRequest))).andReturn();
+                .content(objectMapper.writeValueAsString(sendOtpRequest))).andReturn();
 
-        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
-        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = objectMapper.readValue(
+                sendOtpResult.getResponse().getContentAsString(),
+                new TypeReference<ApiResponse<FindPwSendOtpResponse>>() {}
+        );
 
         // 2) validateOtp
         String otpNo = mapper.selectUserById(user.getId().value()).getOtpNo().value();
@@ -112,7 +117,7 @@ public class FindPwValidateOtpTest extends BaseIntegration {
                         .session(session)
                         .header("JP_FPW_ID", sessionId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(validateOtpRequest))
+                        .content(objectMapper.writeValueAsString(validateOtpRequest))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(SuccessFlag.Y.getValue()))
@@ -185,13 +190,15 @@ public class FindPwValidateOtpTest extends BaseIntegration {
         sendOtpRequest.setEmail(user.getEmail().value());
 
         // 1차로 otp 전송 단계로 통과 검증을 위한 세션 발급받기
-        Gson gson = GsonUtils.getGson();
+        ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
         MvcResult sendOtpResult = mockMvc.perform(post(SEND_OTP_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(sendOtpRequest))).andReturn();
+                .content(objectMapper.writeValueAsString(sendOtpRequest))).andReturn();
 
-        Type sendOtpResponseType = new TypeToken<ApiResponse<FindPwSendOtpResponse>>() {}.getType();
-        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = gson.fromJson(sendOtpResult.getResponse().getContentAsString(), sendOtpResponseType);
+        ApiResponse<FindPwSendOtpResponse> sendOtpResponse = objectMapper.readValue(
+                sendOtpResult.getResponse().getContentAsString(),
+                new TypeReference<ApiResponse<FindPwSendOtpResponse>>() {}
+        );
 
         // 2) validateOtp
         final String sessionId = sendOtpResponse.getData().getSessionId();
@@ -210,7 +217,7 @@ public class FindPwValidateOtpTest extends BaseIntegration {
                         .session(session)
                         .header("JP_FPW_ID", sessionId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(validateOtpRequest))
+                        .content(objectMapper.writeValueAsString(validateOtpRequest))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(SuccessFlag.N.getValue()));

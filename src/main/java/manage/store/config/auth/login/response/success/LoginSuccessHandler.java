@@ -1,35 +1,44 @@
 package manage.store.config.auth.login.response.success;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import manage.store.config.WebConfiguration;
 import manage.store.consts.Message;
+import manage.store.dto.auth.LoginResponse;
 import manage.store.dto.common.ApiResponse;
-import manage.store.utils.GsonUtils;
+import manage.store.service.user.auth.JwtService;
+import manage.store.service.user.auth.model.LoginUserDetails;
+import manage.store.utils.ObjectMapperUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Slf4j
-@Component
+@RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+
+    private final JwtService jwtService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Object credentials = authentication.getCredentials();
+        LoginUserDetails principal = (LoginUserDetails) authentication.getPrincipal();
 
-        Gson gson = GsonUtils.getGson();
+        ObjectMapper objectMapper = ObjectMapperUtils.getObjectMapper();
+
+        String jwt = jwtService.create(principal.getUserId());
+        LoginResponse responseData = new LoginResponse(principal.getUserId(), jwt);
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(WebConfiguration.RESPONSE_CONTENT_TYPE);
-        response.getWriter().write(gson.toJson(ApiResponse.success(Message.LOGIN_SUCCESS)));
+        response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.success(responseData, Message.LOGIN_SUCCESS)));
 
         clearAuthenticationAttributes(request);
     }

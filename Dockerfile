@@ -13,11 +13,13 @@ RUN --mount=type=secret,id=db_url \
     --mount=type=secret,id=db_password \
     --mount=type=secret,id=google_email \
     --mount=type=secret,id=google_app_pw \
+    --mount=type=secret,id=jwt_secret_key \
     DB_URL=$(cat /run/secrets/db_url) \
     DB_USERNAME=$(cat /run/secrets/db_username) \
     DB_PASSWORD=$(cat /run/secrets/db_password) \
     GOOGLE_EMAIL=$(cat /run/secrets/google_email) \
     GOOGLE_APP_PW=$(cat /run/secrets/google_app_pw) \
+    JWT_SECRET_KEY=$(cat /run/secrets/jwt_secret_key) \
     ./gradlew build
 
 

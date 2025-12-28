@@ -1,12 +1,15 @@
 package manage.store.dto.user.find;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import manage.store.exception.common.InvalidParameterException;
 import org.springframework.util.StringUtils;
 
 public class FindPwSendOtpResponse extends FindPwBaseResponse {
 
-    private FindPwSendOtpResponse(String sessionId) {
+    @JsonCreator
+    private FindPwSendOtpResponse(@JsonProperty("sessionId") String sessionId) {
         super(sessionId);
     }
 

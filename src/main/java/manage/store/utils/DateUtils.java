@@ -3,13 +3,16 @@ package manage.store.utils;
 import manage.store.exception.common.InvalidParameterException;
 import org.springframework.util.StringUtils;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.WeekFields;
 
+/**
+ * 날짜 객체를 활용할 수 있는 Util
+ */
 public class DateUtils {
+
+    public static final String TIME_ZONE_SEOUL = "Asia/Seoul";
 
     /**
      * 주어진 연도와 월에 해당하는 날짜의 개수를 반환합니다.
@@ -61,6 +64,14 @@ public class DateUtils {
         int week2 = date2.get(weekFields.weekOfYear());
 
         return (year1 == year2) && (week1 == week2);
+    }
+
+    /**
+     * 한국 시간으로 현재 날짜에 대한 LocalDate를 반환
+     * @return LocalDate 한국 현재 날짜
+     */
+    public static LocalDate nowDate() {
+        return LocalDate.now(ZoneId.of(TIME_ZONE_SEOUL));
     }
 
     /**
