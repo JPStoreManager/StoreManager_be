@@ -29,6 +29,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           GOOGLE_EMAIL: ${{ secrets.GOOGLE_EMAIL }}
           GOOGLE_APP_PW: ${{ secrets.GOOGLE_APP_PW }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
           echo "Building Docker image for validation purposes..."
 
@@ -39,6 +40,7 @@ jobs:
                 --secret id=db_password,env=DB_PASSWORD \
                 --secret id=google_email,env=GOOGLE_EMAIL \
                 --secret id=google_app_pw,env=GOOGLE_APP_PW \
+                --secret id=jwt_secret_key,env=JWT_SECRET_KEY
                 --progress=plain  --platform linux/amd64 \
                 -t store-manager:local . --progress=plain
 

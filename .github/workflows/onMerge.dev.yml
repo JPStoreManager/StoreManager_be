@@ -53,6 +53,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           GOOGLE_EMAIL: ${{ secrets.GOOGLE_EMAIL }}
           GOOGLE_APP_PW: ${{ secrets.GOOGLE_APP_PW }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
           # Dockerfile을 사용하여 이미지 빌드
           echo "Building Docker image..."
@@ -62,6 +63,7 @@ jobs:
                 --secret id=db_password,env=DB_PASSWORD \
                 --secret id=google_email,env=GOOGLE_EMAIL \
                 --secret id=google_app_pw,env=GOOGLE_APP_PW \
+                --secret id=jwt_secret_key,env=JWT_SECRET_KEY
                 --platform linux/amd64 \
                 -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }} .
 
@@ -88,6 +90,7 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             GOOGLE_EMAIL=${{ secrets.GOOGLE_EMAIL }}
             GOOGLE_APP_PW="${{ secrets.GOOGLE_APP_PW }}"
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
 
             echo "Logging in to ECR from EC2"
             sudo aws ecr get-login-password --region ${{ env.AWS_REGION }} | sudo docker login --username AWS --password-stdin $ECR_REGISTRY
@@ -107,6 +110,7 @@ jobs:
                        -e DB_PASSWORD="$DB_PASSWORD" \
                        -e GOOGLE_EMAIL="$GOOGLE_EMAIL" \
                        -e GOOGLE_APP_PW="$GOOGLE_APP_PW" \
+                       -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
                        $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
             echo "Deployment completed successfully"
